@@ -1,0 +1,41 @@
+{
+	"schemaVersion": 1,
+	"id": "wandering_orc",
+	"version": "${version}",
+	"name": "Wandering Orc",
+	"description": "Attempt to make my own custom mob work",
+	"authors": [
+		"Malfu!"
+	],
+	"contact": {
+		"homepage": "https://fabricmc.net/",
+		"sources": "https://github.com/FabricMC/fabric-example-mod"
+	},
+	"license": "ARR",
+	"icon": "assets/wandering_orc/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"malfu.wandering_orc.WanderingOrc"
+		],
+		"client": [
+			"malfu.wandering_orc.WanderingOrcClient"
+		],
+		"fabric-datagen": [
+			"malfu.wandering_orc.WanderingOrcDataGenerator"
+		]
+	},
+	"mixins": [
+		"wandering_orc.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.9",
+		"minecraft": "~1.20.1",
+		"java": ">=17",
+		"fabric-api": "*",
+		"geckolib":">=4.4"
+	},
+	"suggests": {
+		"another-mod": "*"
+	}
+}
