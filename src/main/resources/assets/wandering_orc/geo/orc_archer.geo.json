@@ -3,7 +3,7 @@
 	"minecraft:geometry": [
 		{
 			"description": {
-				"identifier": "geometry.unknown",
+				"identifier": "geometry.orc_archer",
 				"texture_width": 128,
 				"texture_height": 128,
 				"visible_bounds_width": 3,
@@ -85,6 +85,67 @@
 					]
 				},
 				{
+					"name": "bow",
+					"parent": "lowerarms",
+					"pivot": [8, 14.25, 4.25],
+					"rotation": [0, -90, 0],
+					"cubes": [
+						{"origin": [5, 14.25, 4.25], "size": [6, 1, 1], "uv": [83, 5]}
+					]
+				},
+				{
+					"name": "IR",
+					"parent": "bow",
+					"pivot": [11, 15.13059, 4.75],
+					"rotation": [0, 0, 22.5],
+					"cubes": [
+						{"origin": [9.97585, 12.86242, 3.75], "size": [7, 2, 2], "pivot": [8, 16.13059, 4.75], "rotation": [0, 0, -22.5], "uv": [83, 10]}
+					]
+				},
+				{
+					"name": "OR",
+					"parent": "IR",
+					"pivot": [16.9122, 17.11864, 4.75],
+					"rotation": [0, 0, -10],
+					"cubes": [
+						{"origin": [16.21583, 16.54227, 4.25], "size": [9, 2, 1], "pivot": [16.9122, 17.11864, 4.75], "rotation": [0, 0, -42.5], "uv": [83, 7]}
+					]
+				},
+				{
+					"name": "stringR",
+					"parent": "OR",
+					"pivot": [22.0122, 23.21864, 4.75],
+					"cubes": [
+						{"origin": [5.9122, 21.61864, 4.75], "size": [16, 0.5, 0], "pivot": [15.9122, 21.11864, 3.75], "rotation": [0, 0, -12.5], "uv": [83, 0], "mirror": true}
+					]
+				},
+				{
+					"name": "IL",
+					"parent": "bow",
+					"pivot": [5, 15.13059, 4.75],
+					"rotation": [0, 0, -22.5],
+					"cubes": [
+						{"origin": [-0.97585, 12.86242, 3.75], "size": [7, 2, 2], "pivot": [8, 16.13059, 4.75], "rotation": [0, 0, 22.5], "uv": [83, 10], "mirror": true}
+					]
+				},
+				{
+					"name": "OL",
+					"parent": "IL",
+					"pivot": [-0.9122, 17.11864, 4.75],
+					"rotation": [0, 0, 10],
+					"cubes": [
+						{"origin": [-9.21583, 16.54227, 4.25], "size": [9, 2, 1], "pivot": [-0.9122, 17.11864, 4.75], "rotation": [0, 0, 42.5], "uv": [83, 7], "mirror": true}
+					]
+				},
+				{
+					"name": "stringL",
+					"parent": "OL",
+					"pivot": [-5.9122, 23.11864, 4.75],
+					"cubes": [
+						{"origin": [-5.9122, 21.61864, 4.75], "size": [16, 0.5, 0], "pivot": [0.0878, 21.11864, 3.75], "rotation": [0, 0, 12.5], "uv": [83, 0]}
+					]
+				},
+				{
 					"name": "Rarms",
 					"parent": "body",
 					"pivot": [-6, 28, 4.25]
@@ -146,6 +207,15 @@
 					"pivot": [-2.5, 18, 4],
 					"cubes": [
 						{"origin": [-5, 9, 1.5], "size": [5, 9, 5], "uv": [32, 32], "mirror": true}
+					]
+				},
+				{
+					"name": "arrow",
+					"pivot": [-6.875, 14.375, 3.75],
+					"rotation": [90, 0, 0],
+					"cubes": [
+						{"origin": [-7, 13, -15.75], "size": [0, 3, 21], "uv": [83, -6]},
+						{"origin": [-7.25, 15.25, -15.75], "size": [0, 3, 21], "pivot": [-8.25, 15.25, 4.25], "rotation": [0, 0, 90], "uv": [83, -6]}
 					]
 				}
 			]
