@@ -3,6 +3,7 @@ package malfu.wandering_orc.entity.custom;
 import malfu.wandering_orc.entity.ai.CrossOrcRevengeGoal;
 import malfu.wandering_orc.entity.ai.OrcWarriorAttackGoal;
 import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -74,6 +75,8 @@ public class OrcWarriorEntity extends OrcGroupEntity implements GeoEntity {
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, IronGolemEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, PatrolEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, AbstractPiglinEntity.class, true));
+        this.targetSelector.add(3, new ActiveTargetGoal<>(this, ZombieEntity.class, true));
+        this.targetSelector.add(2, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, OrcGroupEntity.TARGET_ORC_ENEMIES));
     }
 
 

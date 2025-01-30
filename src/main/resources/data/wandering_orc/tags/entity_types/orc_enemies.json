@@ -1,0 +1,33 @@
+{
+  "replace": false,
+  "values": [
+    "antiquebeasts:elite_hoplite",
+    "antiquebeasts:champion_hoplite",
+    "antiquebeasts:hero_hoplite",
+    "antiquebeasts:hades_chosen",
+    "antiquebeasts:hades_shade",
+    "antiquebeasts:cyclops",
+    "antiquebeasts:frost_cyclops",
+    "antiquebeasts:hersir",
+    "antiquebeasts:huskarl",
+    "antiquebeasts:throwing_axeman",
+    "antiquebeasts:einherjar",
+    "antiquebeasts:valkyrie",
+    "antiquebeasts:axeman",
+    "antiquebeasts:wadjet",
+    "antiquebeasts:camelry",
+    "antiquebeasts:mummy",
+    "antiquebeasts:servant",
+    "antiquebeasts:elephant_rider",
+    "antiquebeasts:chimera",
+    "antiquebeasts:pegasus",
+    "antiquebeasts:centaur",
+    "antiquebeasts:draugr",
+    "antiquebeasts:harpy",
+    "antiquebeasts:mummy_boss",
+    "antiquebeasts:egyptian_caravan",
+    "antiquebeasts:draugr_archer",
+    "antiquebeasts:draugr_wight",
+    "antiquebeasts:draugr_scourge"
+  ]
+}
