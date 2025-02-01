@@ -36,9 +36,9 @@ public class OrcArcherMeleeBowGoal extends Goal {
     protected void punchAttack(LivingEntity target) {
         if(this.orc.tryAttack(target)) {
             target.addVelocity(
-                    target.getX()*1.3 - this.orc.getX()*1.3,
-                    0.4,
-                    target.getZ()*1.3 - this.orc.getZ()*1.3
+                    target.getX() - this.orc.getX(),
+                    0.5,
+                    target.getZ() - this.orc.getZ()
             );
         }
         this.getPunchSound();
@@ -98,29 +98,32 @@ public class OrcArcherMeleeBowGoal extends Goal {
 
         if(this.attackCondition == 1) {
             this.orc.setAttacking(false);
-            this.orc.getLookControl().lookAt(this.target, 30.0F, 30.0F);
+
+            if (target != null) {
+                this.orc.getLookControl().lookAt(this.target, 10.0F, 10.0F);
+            }
 
             if (distanceToTarget <= 15 && this.attackCooldown <= 0) {
-            this.orc.setAttackName("animation.orc_archer.bow_attack");
-            this.attackCooldown = 80;
-            this.orc.setTrigger(true);
+                this.orc.getNavigation().startMovingTo(target, 0.1f);
+                this.orc.setAttackName("animation.orc_archer.bow_attack");
+                this.attackCooldown = 80;
+                this.orc.setTrigger(true);
             } else if (distanceToTarget <= 15 && this.attackCooldown == 64){
+                World world = this.orc.getWorld();
+                ItemStack arrowStack = this.orc.getProjectileType(new ItemStack(Items.ARROW));
+                PersistentProjectileEntity arrow = createArrow(world, arrowStack);
+                arrow.setOwner(this.orc);
 
-            World world = this.orc.getWorld();
-            ItemStack arrowStack = this.orc.getProjectileType(new ItemStack(Items.ARROW));
-            PersistentProjectileEntity arrow = createArrow(world, arrowStack);
-            arrow.setOwner(this.orc);
+                double x = this.target.getX() - this.orc.getX();
+                double y = this.target.getBodyY(0.33333333333) - arrow.getY();
+                double z = this.target.getZ() - this.orc.getZ();
+                double f = MathHelper.sqrt((float) (x * x + z * z));
+                arrow.setVelocity(x, y + f * 0.1, z, 1.6F, 0.5F);
+                world.spawnEntity(arrow);
 
-            double x = this.target.getX() - this.orc.getX();
-            double y = this.target.getBodyY(0.33333333333) - arrow.getY();
-            double z = this.target.getZ() - this.orc.getZ();
-            double f = MathHelper.sqrt((float) (x * x + z * z));
-            arrow.setVelocity(x, y + f * 0.1, z, 1.6F, 0.5F);
-            world.spawnEntity(arrow);
-
-            this.orc.setTrigger(false);
-            } else if (distanceToTarget > 15) {
-            this.orc.getNavigation().startMovingTo(this.target, this.speed);
+                this.orc.setTrigger(false);
+            } else if (distanceToTarget > 12) {
+                this.orc.getNavigation().startMovingTo(this.target, this.speed);
 
             } else if (this.attackCooldown <= 1) {
                 this.attackCondition = 0;

@@ -65,6 +65,12 @@ public class OrcWarriorMeleeGoal extends Goal {
         this.randomizer = Math.random();
         this.orc.getNavigation().startMovingTo(target, this.speed);
 
+        if(distanceToTarget <= d) {
+            this.orc.setAttacking(false);
+        } else {
+            this.orc.setAttacking(true);
+        }
+
         if(this.attackCondition == 0) {
             if(this.randomizer < 0.7) {
                 if(this.randomizer < 0.4) {
@@ -88,6 +94,8 @@ public class OrcWarriorMeleeGoal extends Goal {
 
             } else if (distanceToTarget <= d && this.attackCooldown == 35) {
                 this.orc.tryAttack(target);
+
+            } else if (this.attackCooldown == 34) {
                 this.orc.setTrigger(false);
 
             } else if (this.attackCooldown <= 1) {
@@ -107,6 +115,8 @@ public class OrcWarriorMeleeGoal extends Goal {
 
             } else if (distanceToTarget <= d && this.attackCooldown == 15) {
                 this.orc.tryAttack(target);
+
+            } else if (this.attackCooldown == 14) {
                 this.orc.setTrigger(false);
 
             } else if (this.attackCooldown <= 1) {
@@ -119,6 +129,6 @@ public class OrcWarriorMeleeGoal extends Goal {
     }
 
     protected double getSquaredMaxAttackDistance(LivingEntity entity) {
-        return (double) (2.5F + entity.getWidth());
+        return (double) (2.0F + entity.getWidth());
     }
 }
