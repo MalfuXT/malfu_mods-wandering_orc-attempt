@@ -2,11 +2,13 @@ package malfu.wandering_orc.entity.custom;
 
 import malfu.wandering_orc.entity.ai.CrossOrcRevengeGoal;
 import malfu.wandering_orc.entity.ai.OrcArcherMeleeBowGoal;
+import malfu.wandering_orc.sound.ModSounds;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.data.DataTracker;
 import net.minecraft.entity.data.TrackedData;
 import net.minecraft.entity.data.TrackedDataHandlerRegistry;
@@ -14,6 +16,8 @@ import net.minecraft.entity.mob.*;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -112,6 +116,16 @@ public class OrcArcherEntity extends OrcGroupEntity implements GeoEntity {
             return PlayState.CONTINUE;
         }
         return PlayState.STOP;
+    }
+
+    @Override
+    protected SoundEvent getDeathSound() {
+        return ModSounds.ORC_DEATH;
+    }
+
+    @Override
+    protected SoundEvent getHurtSound(DamageSource source) {
+        return ModSounds.ORC_HURT2;
     }
 
 

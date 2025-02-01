@@ -4,6 +4,7 @@ import malfu.wandering_orc.entity.ModEntities;
 import malfu.wandering_orc.entity.custom.OrcArcherEntity;
 import malfu.wandering_orc.entity.custom.OrcWarriorEntity;
 import malfu.wandering_orc.items.ModItems;
+import malfu.wandering_orc.sound.ModSounds;
 import malfu.wandering_orc.world.gen.ModWorldGeneration;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
@@ -18,6 +19,8 @@ public class WanderingOrc implements ModInitializer {
 	public void onInitialize() {
 
 		ModWorldGeneration.generateModWorldGen();
+
+		ModSounds.registerSounds();
 
 		ModItems.registerModItems();
 		FabricDefaultAttributeRegistry.register(ModEntities.ORC_ARCHER, OrcArcherEntity.setAttributes());
