@@ -1,12 +1,15 @@
 package malfu.wandering_orc.entity.ai;
 
 import malfu.wandering_orc.entity.custom.OrcArcherEntity;
+import malfu.wandering_orc.sound.ModSounds;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
 
@@ -18,11 +21,27 @@ public class OrcArcherMeleeBowGoal extends Goal {
     private int attackCooldown;
     private double speed;
     private int attackCondition = 0;
+    double randomizer;
 
     public OrcArcherMeleeBowGoal(OrcArcherEntity orc, double speed) {
         this.orc = orc;
         this.speed = speed;
-        this.setControls(EnumSet.of(Control.TARGET, Control.MOVE)); // Important!
+        this.setControls(EnumSet.of(Control.TARGET, Control.MOVE));
+    }
+
+    protected void getPunchSound() { //sounds decrease as range added
+        this.orc.playSound(ModSounds.ORC_ARCHER_PUNCH, 1.0F, 1.0F);
+    }
+
+    protected void punchAttack(LivingEntity target) {
+        if(this.orc.tryAttack(target)) {
+            target.addVelocity(
+                    target.getX()*1.3 - this.orc.getX()*1.3,
+                    0.4,
+                    target.getZ()*1.3 - this.orc.getZ()*1.3
+            );
+        }
+        this.getPunchSound();
     }
 
     @Override
@@ -58,6 +77,7 @@ public class OrcArcherMeleeBowGoal extends Goal {
         this.target = this.orc.getTarget(); // Keep target updated
         this.attackCooldown = Math.max(this.attackCooldown - 1, 0);
         if (this.target == null) return;
+        this.randomizer = Math.random();
         double distanceToTarget = this.orc.distanceTo(this.target);
 
         if(this.attackCondition == 0) {
@@ -65,13 +85,20 @@ public class OrcArcherMeleeBowGoal extends Goal {
                 this.orc.setAttackName("animation.orc_archer.bow_attack");
                 this.attackCondition = 1;
             } else {
-                this.orc.setAttackName("animation.orc_archer.melee_attack");
-                this.attackCondition = 2;
+                if(this.randomizer < 0.3) {
+                    this.orc.setAttackName("animation.orc_archer.bow_attack");
+                    this.attackCondition = 1;
+                } else {
+                    this.orc.setAttackName("animation.orc_archer.melee_attack");
+                    this.attackCondition = 2;
+                }
+
             }
         }
 
         if(this.attackCondition == 1) {
             this.orc.setAttacking(false);
+            this.orc.getLookControl().lookAt(this.target, 30.0F, 30.0F);
 
             if (distanceToTarget <= 15 && this.attackCooldown <= 0) {
             this.orc.setAttackName("animation.orc_archer.bow_attack");
@@ -88,7 +115,7 @@ public class OrcArcherMeleeBowGoal extends Goal {
             double y = this.target.getBodyY(0.33333333333) - arrow.getY();
             double z = this.target.getZ() - this.orc.getZ();
             double f = MathHelper.sqrt((float) (x * x + z * z));
-            arrow.setVelocity(x, y + f * 0.1, z, 2.0F, 0.5F);
+            arrow.setVelocity(x, y + f * 0.1, z, 1.6F, 0.5F);
             world.spawnEntity(arrow);
 
             this.orc.setTrigger(false);
@@ -98,7 +125,6 @@ public class OrcArcherMeleeBowGoal extends Goal {
             } else if (this.attackCooldown <= 1) {
                 this.attackCondition = 0;
             }
-            this.orc.getLookControl().lookAt(this.target, 15.0F, 15.0F);
         } else {
             this.orc.setAttacking(true);
         }
@@ -119,13 +145,7 @@ public class OrcArcherMeleeBowGoal extends Goal {
 
             } else if (distanceToTarget <= 3 && this.attackCooldown == 65) {
                 this.orc.getLookControl().lookAt(target.getX(), target.getEyeY(), target.getZ());
-                if(this.orc.tryAttack(target)) {
-                    target.addVelocity(
-                            target.getX()*1.3 - this.orc.getX()*1.3,
-                            0.4,
-                            target.getZ()*1.3 - this.orc.getZ()*1.3
-                    );
-                }
+                this.punchAttack(target);
                 this.orc.setTrigger(false);
 
             } else if (attackCooldown <= 1) {

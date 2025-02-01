@@ -12,10 +12,7 @@
     "sounds": [
       "wandering_orc:orc_hurt",
       "wandering_orc:orc_hurt1",
-      "wandering_orc:orc_hurt2",
-      "wandering_orc:orc_hurt3",
-      "wandering_orc:orc_hurt4",
-      "wandering_orc:orc_hurt5"
+      "wandering_orc:orc_hurt2"
     ]
   },
   "orc_hurt2": {
@@ -23,6 +20,12 @@
     "sounds": [
       "wandering_orc:orc_hurt3",
       "wandering_orc:orc_hurt4"
+    ]
+  },
+  "orc_archer_punch": {
+    "subtitle": "wandering_orc.orc_archer_punch",
+    "sounds": [
+      "wandering_orc:orc_archer_punch"
     ]
   }
 }

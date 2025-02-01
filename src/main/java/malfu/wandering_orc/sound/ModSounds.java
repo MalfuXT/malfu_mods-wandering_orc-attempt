@@ -11,6 +11,7 @@ public class ModSounds {
     public static SoundEvent ORC_DEATH = registerSoundEvent("orc_death");
     public static SoundEvent ORC_HURT = registerSoundEvent("orc_hurt");
     public static SoundEvent ORC_HURT2 = registerSoundEvent("orc_hurt2");
+    public static SoundEvent ORC_ARCHER_PUNCH = registerSoundEvent("orc_archer_punch");
 
 
     private static SoundEvent registerSoundEvent(String name) {
