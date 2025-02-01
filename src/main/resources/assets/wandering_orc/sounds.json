@@ -1,0 +1,28 @@
+{
+  "orc_death": {
+    "subtitle": "wandering_orc.orc_death",
+    "sounds": [
+      "wandering_orc:orc_death",
+      "wandering_orc:orc_death1",
+      "wandering_orc:orc_death2"
+    ]
+  },
+  "orc_hurt": {
+    "subtitle": "wandering_orc.orc_hurt",
+    "sounds": [
+      "wandering_orc:orc_hurt",
+      "wandering_orc:orc_hurt1",
+      "wandering_orc:orc_hurt2",
+      "wandering_orc:orc_hurt3",
+      "wandering_orc:orc_hurt4",
+      "wandering_orc:orc_hurt5"
+    ]
+  },
+  "orc_hurt2": {
+    "subtitle": "wandering_orc.orc_hurt2",
+    "sounds": [
+      "wandering_orc:orc_hurt3",
+      "wandering_orc:orc_hurt4"
+    ]
+  }
+}
