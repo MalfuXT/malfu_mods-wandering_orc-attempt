@@ -26,10 +26,12 @@ import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
-import java.util.function.Predicate;
-
 public class OrcWarriorEntity extends OrcGroupEntity implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+
+    private int animationTick = 0;
+    private int idleCondition = 0;
+    private double randomizer;
 
     public OrcWarriorEntity(EntityType<? extends OrcGroupEntity> entityType, World world) {
         super(entityType, world);
@@ -100,9 +102,32 @@ public class OrcWarriorEntity extends OrcGroupEntity implements GeoEntity {
      }
 
     private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> event) {
-        if (event.isMoving()) {
-            event.getController().setAnimation(RawAnimation.begin().then("animation.orc_warrior.walk", Animation.LoopType.LOOP));
-            return PlayState.CONTINUE;
+        this.animationTick = Math.max(this.animationTick - 1, 0);
+        this.randomizer = Math.random();
+        if(idleCondition == 0) {
+            if(randomizer < 0.5) {
+                idleCondition = 1;
+            } else {
+                idleCondition = 2;
+            }
+        }
+        if(idleCondition == 1) {
+            if (event.isMoving()) {
+                event.animationTick = 80;
+                event.getController().setAnimation(RawAnimation.begin().then("animation.orc_warrior.walk2", Animation.LoopType.LOOP));
+                return PlayState.CONTINUE;
+            } else if (animationTick == 0) {
+                this.idleCondition = 0;
+            }
+        }
+        if(idleCondition == 2) {
+            if (event.isMoving()) {
+                event.animationTick = 80;
+                event.getController().setAnimation(RawAnimation.begin().then("animation.orc_warrior.walk3", Animation.LoopType.LOOP));
+                return PlayState.CONTINUE;
+            } else if (animationTick == 0) {
+            this.idleCondition = 0;
+            }
         }
         event.getController().setAnimation(RawAnimation.begin().then("animation.orc_warrior.idle", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;

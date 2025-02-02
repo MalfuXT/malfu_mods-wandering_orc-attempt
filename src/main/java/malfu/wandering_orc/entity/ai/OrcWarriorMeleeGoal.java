@@ -2,16 +2,20 @@ package malfu.wandering_orc.entity.ai;
 
 import malfu.wandering_orc.entity.custom.OrcArcherEntity;
 import malfu.wandering_orc.entity.custom.OrcWarriorEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 import java.util.EnumSet;
+import java.util.List;
 
 public class OrcWarriorMeleeGoal extends Goal {
     private final OrcWarriorEntity orc;
