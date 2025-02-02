@@ -103,10 +103,10 @@ public class OrcArcherEntity extends OrcGroupEntity implements GeoEntity {
 
     private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> event) {
         if (event.isMoving()) {
-            event.getController().setAnimation(RawAnimation.begin().then("animation.orc_archer.walk", Animation.LoopType.LOOP));
+            event.getController().setAnimation(RawAnimation.begin().then("animation.orc_archer.walk2", Animation.LoopType.LOOP));
             return PlayState.CONTINUE;
         }
-        event.getController().setAnimation(RawAnimation.begin().then("animation.orc_archer.idle", Animation.LoopType.LOOP));
+        event.getController().setAnimation(RawAnimation.begin().then("animation.orc_archer.idle2", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;
     }
 
