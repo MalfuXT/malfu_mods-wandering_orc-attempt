@@ -1,6 +1,7 @@
 package malfu.wandering_orc.entity.ai;
 
 import malfu.wandering_orc.entity.custom.OrcArcherEntity;
+import malfu.wandering_orc.entity.custom.OrcGroupEntity;
 import malfu.wandering_orc.sound.ModSounds;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
@@ -9,6 +10,7 @@ import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Hand;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
@@ -35,11 +37,13 @@ public class OrcArcherMeleeBowGoal extends Goal {
 
     protected void punchAttack(LivingEntity target) {
         if(this.orc.tryAttack(target)) {
-            target.addVelocity(
-                    target.getX() - this.orc.getX(),
-                    0.5,
-                    target.getZ() - this.orc.getZ()
-            );
+            if(target.getWidth() <= 2 && target.getHeight() <= 2.5){
+                target.addVelocity(
+                        target.getX() - this.orc.getX(),
+                        0.4,
+                        target.getZ() - this.orc.getZ()
+                );
+            }
         }
         this.getPunchSound();
     }
@@ -122,6 +126,7 @@ public class OrcArcherMeleeBowGoal extends Goal {
                 world.spawnEntity(arrow);
 
                 this.orc.setTrigger(false);
+                this.orc.playSound(SoundEvents.ITEM_CROSSBOW_SHOOT, 1.0F, 1.0F);
             } else if (distanceToTarget > 12) {
                 this.orc.getNavigation().startMovingTo(this.target, this.speed);
 

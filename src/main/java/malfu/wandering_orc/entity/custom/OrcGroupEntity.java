@@ -9,15 +9,16 @@ import net.minecraft.entity.ai.TargetPredicate;
 import net.minecraft.entity.mob.HostileEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.entity.mob.PatrolEntity;
+import net.minecraft.entity.passive.AnimalEntity;
 import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.tag.BlockTags;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.world.LightType;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
+import net.minecraft.world.*;
+import net.minecraft.world.dimension.DimensionType;
 
 import java.util.function.Predicate;
 
@@ -40,7 +41,6 @@ public class OrcGroupEntity extends HostileEntity {
     };
 
     public static boolean canSpawn(EntityType<? extends OrcGroupEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        return world.getLightLevel(LightType.BLOCK, pos) > 8 ? false : canSpawnIgnoreLightLevel(type, world, spawnReason, pos, random);
+        return world.getLightLevel(LightType.BLOCK, pos) <= 8 && canSpawnIgnoreLightLevel(type, world, spawnReason, pos, random);
     }
-
 }

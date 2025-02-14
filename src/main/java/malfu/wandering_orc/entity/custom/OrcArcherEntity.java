@@ -17,7 +17,6 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -111,7 +110,7 @@ public class OrcArcherEntity extends OrcGroupEntity implements GeoEntity {
     }
 
     private <E extends GeoAnimatable> PlayState attackstancePredicate(AnimationState<E> event) {
-        if (this.isAttacking()) {
+        if ((this.isAttacking() && event.isMoving())) {
             event.getController().setAnimation(RawAnimation.begin().then("animation.orc_archer.running", Animation.LoopType.LOOP));
             return PlayState.CONTINUE;
         }

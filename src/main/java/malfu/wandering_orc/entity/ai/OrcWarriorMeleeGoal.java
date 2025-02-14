@@ -9,6 +9,7 @@ import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
@@ -29,6 +30,11 @@ public class OrcWarriorMeleeGoal extends Goal {
         this.orc = orc;
         this.speed = speed;
         this.setControls(EnumSet.of(Control.TARGET, Control.MOVE)); // Important!
+    }
+
+    private void attackNormal() {
+        this.orc.tryAttack(target);
+        this.orc.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 1.0F, 1.0F);
     }
 
     @Override
@@ -97,7 +103,7 @@ public class OrcWarriorMeleeGoal extends Goal {
                 this.orc.setTrigger(true);
 
             } else if (distanceToTarget <= d && this.attackCooldown == 35) {
-                this.orc.tryAttack(target);
+                this.attackNormal();
 
             } else if (this.attackCooldown == 34) {
                 this.orc.setTrigger(false);
@@ -115,10 +121,10 @@ public class OrcWarriorMeleeGoal extends Goal {
                 this.orc.speed -= 1.3;
 
             } else if (distanceToTarget <= d && this.attackCooldown == 25) {
-                this.orc.tryAttack(target);
+                this.attackNormal();
 
             } else if (distanceToTarget <= d && this.attackCooldown == 15) {
-                this.orc.tryAttack(target);
+                this.attackNormal();
 
             } else if (this.attackCooldown == 14) {
                 this.orc.setTrigger(false);
