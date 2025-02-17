@@ -2,6 +2,7 @@ package malfu.wandering_orc.entity.custom;
 
 import malfu.wandering_orc.entity.ai.CrossOrcRevengeGoal;
 import malfu.wandering_orc.entity.ai.OrcArcherMeleeBowGoal;
+import malfu.wandering_orc.entity.ai.wander.OrcFollowLeaderGoal;
 import malfu.wandering_orc.sound.ModSounds;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -68,7 +69,8 @@ public class OrcArcherEntity extends OrcGroupEntity implements GeoEntity {
     @Override
     protected void initGoals() {
         this.goalSelector.add(1, new SwimGoal(this));
-        this.goalSelector.add(3, new OrcArcherMeleeBowGoal(this, 1.4));
+        this.goalSelector.add(2, new OrcArcherMeleeBowGoal(this, 1.4));
+        this.goalSelector.add(3, new OrcFollowLeaderGoal(this));
         this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0D));
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.add(6, new LookAroundGoal(this));

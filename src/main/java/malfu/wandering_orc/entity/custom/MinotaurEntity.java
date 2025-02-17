@@ -64,6 +64,7 @@ public class MinotaurEntity extends OrcGroupEntity implements GeoEntity {
     public void setAttackName(String attackName) {this.dataTracker.set(ATKVARI, attackName);}
     public String getAttackName() {return (String)this.dataTracker.get(ATKVARI);}
 
+
     public static DefaultAttributeContainer.Builder setAttributes() {
         return OrcGroupEntity.createHostileAttributes()
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)

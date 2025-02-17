@@ -1,11 +1,11 @@
 package malfu.wandering_orc.entity.custom;
 
 import malfu.wandering_orc.entity.ai.CrossOrcRevengeGoal;
-import malfu.wandering_orc.entity.ai.OrcArcherMeleeBowGoal;
 import malfu.wandering_orc.entity.ai.OrcChampionMeleeGoal;
-import malfu.wandering_orc.entity.ai.OrcWarriorMeleeGoal;
 import malfu.wandering_orc.entity.ai.wander.WanderReallyFarAway;
 import malfu.wandering_orc.sound.ModSounds;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.*;
@@ -22,6 +22,7 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -33,19 +34,15 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
 
-    private int animationTick = 0;
-    private int idleCondition = 0;
-    private double randomizer;
-
     public OrcChampionEntity(EntityType<? extends OrcGroupEntity> entityType, World world) {
         super(entityType, world);
     }
 
     public static final TrackedData<Boolean> ATKTIMING =
-            DataTracker.registerData(OrcArcherEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+            DataTracker.registerData(OrcChampionEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
     public static final TrackedData<String> ATKVARI =
-            DataTracker.registerData(OrcArcherEntity.class, TrackedDataHandlerRegistry.STRING);
+            DataTracker.registerData(OrcChampionEntity.class, TrackedDataHandlerRegistry.STRING);
 
     public static final TrackedData<Boolean> DODGE =
             DataTracker.registerData(OrcChampionEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
@@ -94,7 +91,6 @@ public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
         this.targetSelector.add(2, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, OrcGroupEntity.TARGET_ORC_ENEMIES));
     }
 
-
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
@@ -122,9 +118,9 @@ public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
     private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> event) {
         if (event.isMoving()) {
             event.getController().setAnimation(RawAnimation.begin().then("animation.orc_champion.walk", Animation.LoopType.LOOP));
-            return PlayState.CONTINUE;
+        } else {
+            event.getController().setAnimation(RawAnimation.begin().then("animation.orc_champion.idle", Animation.LoopType.LOOP));
         }
-        event.getController().setAnimation(RawAnimation.begin().then("animation.orc_champion.idle", Animation.LoopType.LOOP));
         return PlayState.CONTINUE;
     }
 

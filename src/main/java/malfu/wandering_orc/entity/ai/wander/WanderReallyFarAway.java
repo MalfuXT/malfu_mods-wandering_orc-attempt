@@ -20,10 +20,10 @@ public class WanderReallyFarAway extends WanderAroundFarGoal {
     @Override
     protected Vec3d getWanderTarget() {
         if (this.mob.isInsideWaterOrBubbleColumn()) {
-            Vec3d vec3d = FuzzyTargeting.find(this.mob, 100, 100);
+            Vec3d vec3d = FuzzyTargeting.find(this.mob, 10, 7);
             return vec3d == null ? super.getWanderTarget() : vec3d;
         } else {
-            return this.mob.getRandom().nextFloat() >= this.probability ? FuzzyTargeting.find(this.mob, 10, 7) : super.getWanderTarget();
+            return this.mob.getRandom().nextFloat() >= this.probability ? FuzzyTargeting.find(this.mob, 32, 32) : super.getWanderTarget();
         }
     }
 }
