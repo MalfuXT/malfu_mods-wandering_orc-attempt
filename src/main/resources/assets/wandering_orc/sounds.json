@@ -27,5 +27,64 @@
     "sounds": [
       "wandering_orc:orc_archer_punch"
     ]
+  },
+  "mino_growl": {
+    "subtitle": "wandering_orc.mino_growl",
+    "sounds": [
+      "wandering_orc:mino_growl",
+      "wandering_orc:mino_growl2"
+    ]
+  },
+  "mino_death": {
+    "subtitle": "wandering_orc.mino_death",
+    "sounds": [
+      "wandering_orc:mino_death",
+      "wandering_orc:mino_death2"
+    ]
+  },
+  "mino_hit": {
+    "subtitle": "wandering_orc.mino_hit",
+    "sounds": [
+      "wandering_orc:mino_hit",
+      "wandering_orc:mino_hit2",
+      "wandering_orc:mino_hit3",
+      "wandering_orc:mino_hit4"
+    ]
+  },
+  "mino_stomp": {
+    "subtitle": "wandering_orc.mino_stomp",
+    "sounds": [
+      "wandering_orc:mino_stomp",
+      "wandering_orc:mino_stomp2"
+    ]
+  },
+  "mino_hurt": {
+    "subtitle": "wandering_orc.mino_hurt",
+    "sounds": [
+      "wandering_orc:mino_hurt",
+      "wandering_orc:mino_hurt2",
+      "wandering_orc:mino_hurt3"
+    ]
+  },
+  "troll_hurt": {
+    "subtitle": "wandering_orc.troll_hurt",
+    "sounds": [
+      "wandering_orc:troll_hurt",
+      "wandering_orc:troll_hurt2",
+      "wandering_orc:troll_hurt3"
+    ]
+  },
+  "troll_death": {
+    "subtitle": "wandering_orc.troll_death",
+    "sounds": [
+      "wandering_orc:troll_death",
+      "wandering_orc:troll_death2"
+    ]
+  },
+  "swing_sound": {
+    "subtitle": "wandering_orc.swing",
+    "sounds": [
+      "wandering_orc:swing"
+    ]
   }
 }
