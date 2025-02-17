@@ -9,4 +9,9 @@ public class OrcChampionRenderer extends GeoEntityRenderer<OrcChampionEntity> {
     public OrcChampionRenderer(EntityRendererFactory.Context renderManager) {
         super(renderManager, new OrcChampionModel());
     }
+
+    @Override
+    public float getMotionAnimThreshold(OrcChampionEntity animatable) {
+        return 0.008F; // Adjust this value as needed
+    }
 }
