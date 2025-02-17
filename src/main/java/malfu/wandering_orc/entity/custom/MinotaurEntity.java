@@ -21,12 +21,14 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.ClientUtils;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class MinotaurEntity extends OrcGroupEntity implements GeoEntity {
@@ -41,10 +43,10 @@ public class MinotaurEntity extends OrcGroupEntity implements GeoEntity {
     }
 
     public static final TrackedData<Boolean> ATKTIMING =
-            DataTracker.registerData(OrcArcherEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+            DataTracker.registerData(MinotaurEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
     public static final TrackedData<String> ATKVARI =
-            DataTracker.registerData(OrcArcherEntity.class, TrackedDataHandlerRegistry.STRING);
+            DataTracker.registerData(MinotaurEntity.class, TrackedDataHandlerRegistry.STRING);
 
     protected void initDataTracker() {
         super.initDataTracker();
@@ -64,11 +66,11 @@ public class MinotaurEntity extends OrcGroupEntity implements GeoEntity {
 
     public static DefaultAttributeContainer.Builder setAttributes() {
         return OrcGroupEntity.createHostileAttributes()
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25D)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 28.0D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0D)
-                .add(EntityAttributes.GENERIC_ARMOR, 13.0)
-                .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.3);
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 80.0D)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 14.0f)
+                .add(EntityAttributes.GENERIC_ARMOR, 4.0f)
+                .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5f);
     }
 
     @Override
@@ -79,20 +81,30 @@ public class MinotaurEntity extends OrcGroupEntity implements GeoEntity {
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.add(6, new LookAroundGoal(this));
         this.targetSelector.add(1, new CrossOrcRevengeGoal(this, OrcGroupEntity.class).setGroupRevenge());
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.add(4, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, MerchantEntity.class, false));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, IronGolemEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, PatrolEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, AbstractPiglinEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, ZombieEntity.class, true));
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, OrcGroupEntity.TARGET_ORC_ENEMIES));
+        this.targetSelector.add(3, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, OrcGroupEntity.TARGET_ORC_ENEMIES));
     }
 
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
-        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
-        controllers.add(new AnimationController<>(this, "attack", 0, this::attackPredicate));
+        controllers.add(new AnimationController<>(this, "controller", 0, this::predicate).setSoundKeyframeHandler((event) -> {
+            PlayerEntity player = ClientUtils.getClientPlayer();
+            if (player != null) {
+                this.getWorld().playSound(player, this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_COW_STEP, this.getSoundCategory(),0.5F, 0.8f);
+            }
+        }));
+        controllers.add(new AnimationController<>(this, "attack", 0, this::attackPredicate).setSoundKeyframeHandler((event) -> {
+            PlayerEntity player = ClientUtils.getClientPlayer();
+            if (player != null) {
+                this.getWorld().playSound(player, this.getX(), this.getY(), this.getZ(), ModSounds.SWING_SOUND, this.getSoundCategory(),1.0F, 1.0f);
+            }
+        }));
     }
 
     private <E extends GeoAnimatable> PlayState attackPredicate(AnimationState<E> event) {
@@ -129,12 +141,12 @@ public class MinotaurEntity extends OrcGroupEntity implements GeoEntity {
 
     @Override
     protected SoundEvent getDeathSound() {
-        return ModSounds.ORC_DEATH;
+        return ModSounds.MINO_DEATH;
     }
 
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
-        return ModSounds.ORC_HURT;
+        return ModSounds.MINO_HURT;
     }
 
 

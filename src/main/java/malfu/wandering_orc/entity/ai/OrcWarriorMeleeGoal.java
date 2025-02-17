@@ -5,6 +5,7 @@ import malfu.wandering_orc.entity.custom.OrcWarriorEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
@@ -36,6 +37,22 @@ public class OrcWarriorMeleeGoal extends Goal {
         this.orc.tryAttack(target);
         this.orc.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 1.0F, 1.0F);
     }
+
+    //START OF STOP ATTACK CODE
+    private int stopAttackCD;
+    private void stopAttackTrig(int stopATimer) {
+        this.stopAttackCD = stopATimer;
+        this.orc.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.15f);
+    }
+
+    private void stopAttack() {
+        if (this.stopAttackCD > 0) {
+            this.stopAttackCD--;
+        } else {
+            this.orc.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.25f); //GETBASEVALUE DIDN'T WORK SOMEHOW, SO YEAH MANUAL.
+        }
+    }
+    //END OF STOP ATTACK CODE
 
     @Override
     public boolean canStart() {
@@ -74,12 +91,7 @@ public class OrcWarriorMeleeGoal extends Goal {
         double d = getSquaredMaxAttackDistance(target);
         this.randomizer = Math.random();
         this.orc.getNavigation().startMovingTo(target, this.speed);
-
-        if(distanceToTarget <= d) {
-            this.orc.setAttacking(false);
-        } else {
-            this.orc.setAttacking(true);
-        }
+        this.stopAttack();
 
         if(this.attackCondition == 0) {
             if(this.randomizer < 0.7) {
@@ -118,7 +130,7 @@ public class OrcWarriorMeleeGoal extends Goal {
             if(distanceToTarget <= d && this.attackCooldown == 0) {
                 this.attackCooldown = 40;
                 this.orc.setTrigger(true);
-                this.orc.speed -= 1.3;
+                this.stopAttackTrig(25);
 
             } else if (distanceToTarget <= d && this.attackCooldown == 25) {
                 this.attackNormal();
@@ -131,9 +143,6 @@ public class OrcWarriorMeleeGoal extends Goal {
 
             } else if (this.attackCooldown <= 1) {
                 this.attackCondition = 0;
-
-            } else if (this.attackCooldown <= 13) {
-                this.orc.speed += 1.3;
             }
         }
     }

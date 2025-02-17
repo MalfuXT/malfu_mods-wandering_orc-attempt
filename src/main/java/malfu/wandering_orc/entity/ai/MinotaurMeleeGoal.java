@@ -9,6 +9,7 @@ import net.minecraft.block.BlockState;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.particle.ParticleTypes;
@@ -33,9 +34,9 @@ public class MinotaurMeleeGoal extends Goal {
     private double speed;
     private int attackCondition = 0;
     double randomizer;
+    private int stopAttackCD;
 
     private int initialcooldown = 80;
-    private int initiallongercd = 80;
     private int normalattack = 9;
     private int holdattack = 25;
     private int holdmeattack = 39;
@@ -47,8 +48,8 @@ public class MinotaurMeleeGoal extends Goal {
         this.setControls(EnumSet.of(Control.TARGET, Control.MOVE)); // Important!
     }
 
-    protected void stompSound() { //sounds decrease as range added
-        this.orc.playSound(SoundEvents.ENTITY_GENERIC_EXPLODE, 0.8F, 1.0F);
+    protected void stompSound() {
+        this.orc.playSound(ModSounds.MINO_STOMP, 1.0F, 1.0F);
     }
 
     private void generateParticles() {
@@ -56,7 +57,7 @@ public class MinotaurMeleeGoal extends Goal {
         if (this.orc.getWorld().isClient()) {
             return;
         }
-        ((ServerWorld) this.orc.getWorld()).spawnParticles(ParticleTypes.EXPLOSION, sourcePos.x, sourcePos.y, sourcePos.z-2, 20, 1.0, 1.0, 1.0, 0.1);
+        ((ServerWorld) this.orc.getWorld()).spawnParticles(ParticleTypes.EXPLOSION, sourcePos.x, sourcePos.y, sourcePos.z, 20, 2.0, 1.0, 2.0, 1.0);
     }
 
     private void stompAttack() {
@@ -76,9 +77,32 @@ public class MinotaurMeleeGoal extends Goal {
     }
 
     private void attackNormal() {
-        this.orc.tryAttack(target);
-        this.orc.playSound(SoundEvents.ITEM_SHIELD_BLOCK, 1.2F, 0.1F);
+        if(this.orc.tryAttack(target)) {
+            if(target.getWidth() <= 2 && target.getHeight() <= 2.5){
+                target.addVelocity(
+                        target.getX() - this.orc.getX(),
+                        0.3,
+                        target.getZ() - this.orc.getZ()
+                );
+            }
+        }
+        this.orc.playSound(ModSounds.MINO_HIT, 1.0F, 1.0F);
     }
+
+    //START OF STOP ATTACK CODE
+    private void stopAttackTrig(int stopATimer) {
+        this.stopAttackCD = stopATimer;
+        this.orc.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.15f);
+    }
+
+    private void stopAttack() {
+        if (this.stopAttackCD > 0) {
+            this.stopAttackCD--;
+        } else {
+            this.orc.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.25f); //GETBASEVALUE DIDN'T WORK SOMEHOW, SO YEAH MANUAL.
+        }
+    }
+    //END OF STOP ATTACK CODE
 
     @Override
     public boolean canStart() {
@@ -116,7 +140,8 @@ public class MinotaurMeleeGoal extends Goal {
         if (this.target == null) return;
         double distanceToTarget = this.orc.distanceTo(this.target);
         double d = getSquaredMaxAttackDistance(target);
-        this.orc.getNavigation().startMovingTo(target, this.speed);
+        this.orc.getNavigation().startMovingTo(target, speed);
+        this.stopAttack();
 
         if(distanceToTarget <= d) {
             this.orc.setAttacking(false);
@@ -126,10 +151,9 @@ public class MinotaurMeleeGoal extends Goal {
 
         if(this.attackCondition == 0) {
             this.randomizer = Math.random();
-            if(this.randomizer < 0.1 && stompCooldown == 0) {
+            if(this.randomizer < 0.5 && stompCooldown == 0) {
                 this.orc.setAttackName("animation.minotaur.stomp_aoe");
                 this.attackCondition = 4;
-                System.out.println("TEST " + stompCooldown);
             } else {
                 if (this.randomizer < 0.2) {
                     this.orc.setAttackName("animation.minotaur.holdme_attack");
@@ -149,14 +173,13 @@ public class MinotaurMeleeGoal extends Goal {
             if(distanceToTarget <= d && this.attackCooldown == 0) {
                 this.attackCooldown = initialcooldown;
                 this.orc.setTrigger(true);
-                this.orc.speed -= speed;
+                this.stopAttackTrig(holdattack);
 
             } else if (distanceToTarget <= d && this.attackCooldown == initialcooldown-holdattack) {
                 this.attackNormal();
 
             } else if (this.attackCooldown == initialcooldown-holdattack-5) {
                 this.orc.setTrigger(false);
-                this.orc.speed += speed;
 
             } else if (this.attackCooldown <= 1) {
                 this.attackCondition = 0;
@@ -168,14 +191,13 @@ public class MinotaurMeleeGoal extends Goal {
             if(distanceToTarget <= d && this.attackCooldown == 0) {
                 this.attackCooldown = initialcooldown;
                 this.orc.setTrigger(true);
-                this.orc.speed -= speed;
+                this.stopAttackTrig(normalattack);
 
             } else if (distanceToTarget <= d && this.attackCooldown == initialcooldown-normalattack) {
                 this.attackNormal();
 
             } else if (this.attackCooldown == initialcooldown-normalattack-5) {
                 this.orc.setTrigger(false);
-                this.orc.speed += speed;
 
             } else if (this.attackCooldown <= 1) {
                 this.attackCondition = 0;
@@ -188,14 +210,13 @@ public class MinotaurMeleeGoal extends Goal {
             if(distanceToTarget <= d && this.attackCooldown == 0) {
                 this.attackCooldown = initialcooldown;
                 this.orc.setTrigger(true);
-                this.orc.speed -= speed;
+                this.stopAttackTrig(holdmeattack);
 
             } else if (distanceToTarget <= d && this.attackCooldown == initialcooldown-holdmeattack) {
                 this.attackNormal();
 
             } else if (this.attackCooldown == initialcooldown-holdmeattack-5) {
                 this.orc.setTrigger(false);
-                this.orc.speed += speed;
 
             } else if (this.attackCooldown <= 1) {
                 this.attackCondition = 0;
@@ -206,9 +227,10 @@ public class MinotaurMeleeGoal extends Goal {
         if(this.attackCondition == 4) {
 
             if(distanceToTarget <= d && this.attackCooldown == 0) {
+                this.orc.playSound(ModSounds.MINO_GROWL, 1.0f, 1.0f);
                 this.attackCooldown = initialcooldown;
                 this.orc.setTrigger(true);
-                this.orc.speed -= speed;
+                this.stopAttackTrig(stompaoe);
 
             } else if (this.attackCooldown == initialcooldown-stompaoe) {
                 this.stompAttack();
@@ -216,7 +238,6 @@ public class MinotaurMeleeGoal extends Goal {
 
             } else if (this.attackCooldown == initialcooldown-stompaoe-5) {
                 this.orc.setTrigger(false);
-                this.orc.speed += speed;
 
             } else if (this.attackCooldown <= 1) {
                 this.attackCondition = 0;

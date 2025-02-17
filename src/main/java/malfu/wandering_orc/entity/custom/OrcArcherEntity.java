@@ -57,11 +57,11 @@ public class OrcArcherEntity extends OrcGroupEntity implements GeoEntity {
 
     public static DefaultAttributeContainer.Builder setAttributes() {
         return OrcGroupEntity.createHostileAttributes()
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25D)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 24.0D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0D)
-                .add(EntityAttributes.GENERIC_ARMOR, 5.0)
-                .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.3);
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0f)
+                .add(EntityAttributes.GENERIC_ARMOR, 4.0f)
+                .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.3f);
     }
 
 
@@ -73,7 +73,7 @@ public class OrcArcherEntity extends OrcGroupEntity implements GeoEntity {
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.add(6, new LookAroundGoal(this));
         this.targetSelector.add(1, new CrossOrcRevengeGoal(this, OrcGroupEntity.class).setGroupRevenge());
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.add(4, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, MerchantEntity.class, false));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, IronGolemEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, PatrolEntity.class, true));

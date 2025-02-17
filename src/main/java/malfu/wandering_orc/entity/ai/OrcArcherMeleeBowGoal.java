@@ -3,6 +3,8 @@ package malfu.wandering_orc.entity.ai;
 import malfu.wandering_orc.entity.custom.OrcArcherEntity;
 import malfu.wandering_orc.entity.custom.OrcGroupEntity;
 import malfu.wandering_orc.sound.ModSounds;
+import malfu.wandering_orc.util.MobMoveUtil;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.projectile.ArrowEntity;
@@ -40,7 +42,7 @@ public class OrcArcherMeleeBowGoal extends Goal {
             if(target.getWidth() <= 2 && target.getHeight() <= 2.5){
                 target.addVelocity(
                         target.getX() - this.orc.getX(),
-                        0.4,
+                        0.3,
                         target.getZ() - this.orc.getZ()
                 );
             }
@@ -81,14 +83,15 @@ public class OrcArcherMeleeBowGoal extends Goal {
         this.target = this.orc.getTarget(); // Keep target updated
         this.attackCooldown = Math.max(this.attackCooldown - 1, 0);
         if (this.target == null) return;
-        this.randomizer = Math.random();
         double distanceToTarget = this.orc.distanceTo(this.target);
 
         if(this.attackCondition == 0) {
+            this.randomizer = Math.random();
             if(distanceToTarget > 3) {
                 this.orc.setAttackName("animation.orc_archer.bow_attack");
                 this.attackCondition = 1;
             } else {
+                this.randomizer = Math.random();
                 if(this.randomizer < 0.3) {
                     this.orc.setAttackName("animation.orc_archer.bow_attack");
                     this.attackCondition = 1;
@@ -101,8 +104,6 @@ public class OrcArcherMeleeBowGoal extends Goal {
         }
 
         if(this.attackCondition == 1) {
-            this.orc.setAttacking(false);
-
             if (target != null) {
                 this.orc.getLookControl().lookAt(this.target, 10.0F, 10.0F);
             }
@@ -130,22 +131,17 @@ public class OrcArcherMeleeBowGoal extends Goal {
             } else if (distanceToTarget > 12) {
                 this.orc.getNavigation().startMovingTo(this.target, this.speed);
 
+            } else if (this.attackCooldown <= 60 && distanceToTarget < 7) {
+                MobMoveUtil.circleTarget(orc, target, 3, speed);
+
             } else if (this.attackCooldown <= 1) {
                 this.attackCondition = 0;
             }
         } else {
-            this.orc.setAttacking(true);
         }
 
         if(this.attackCondition == 2) {
             this.orc.getNavigation().startMovingTo(target, this.speed);
-
-            if(distanceToTarget <= 2) {
-                this.orc.setAttacking(false);
-            } else {
-                this.orc.setAttacking(true);
-            }
-
             if(distanceToTarget <= 3 && this.attackCooldown == 0) {
                 this.orc.setAttackName("animation.orc_archer.melee_attack");
                 this.attackCooldown = 80;

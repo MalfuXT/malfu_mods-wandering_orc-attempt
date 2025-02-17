@@ -4,6 +4,7 @@ import malfu.wandering_orc.entity.ai.CrossOrcRevengeGoal;
 import malfu.wandering_orc.entity.ai.OrcArcherMeleeBowGoal;
 import malfu.wandering_orc.entity.ai.OrcChampionMeleeGoal;
 import malfu.wandering_orc.entity.ai.OrcWarriorMeleeGoal;
+import malfu.wandering_orc.entity.ai.wander.WanderReallyFarAway;
 import malfu.wandering_orc.sound.ModSounds;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -69,22 +70,22 @@ public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
 
     public static DefaultAttributeContainer.Builder setAttributes() {
         return OrcGroupEntity.createHostileAttributes()
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25D)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 28.0D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0D)
-                .add(EntityAttributes.GENERIC_ARMOR, 13.0)
-                .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.3);
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 42.0D)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 10.0f)
+                .add(EntityAttributes.GENERIC_ARMOR, 18.0f)
+                .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5f);
     }
 
     @Override
     protected void initGoals() {
         this.goalSelector.add(1, new SwimGoal(this));
         this.goalSelector.add(3, new OrcChampionMeleeGoal(this, 1.3));
-        this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0D));
+        this.goalSelector.add(5, new WanderReallyFarAway(this, 1.0D));
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.add(6, new LookAroundGoal(this));
         this.targetSelector.add(1, new CrossOrcRevengeGoal(this, OrcGroupEntity.class).setGroupRevenge());
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
+        this.targetSelector.add(4, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, MerchantEntity.class, false));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, IronGolemEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, PatrolEntity.class, true));

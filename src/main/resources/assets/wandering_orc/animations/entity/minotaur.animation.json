@@ -1173,6 +1173,14 @@
 						}
 					}
 				}
+			},
+			"sound_effects": {
+				"0.0": {
+					"effect": "walk1"
+				},
+				"0.75": {
+					"effect": "walk2"
+				}
 			}
 		},
 		"animation.minotaur.normal_attack": {
@@ -1553,6 +1561,11 @@
 							"vector": [0, 0, 0]
 						}
 					}
+				}
+			},
+			"sound_effects": {
+				"0.375": {
+					"effect": "swing"
 				}
 			}
 		},
@@ -2012,6 +2025,11 @@
 						}
 					}
 				}
+			},
+			"sound_effects": {
+				"1.1667": {
+					"effect": "swing"
+				}
 			}
 		},
 		"animation.minotaur.holdme_attack": {
@@ -2469,6 +2487,11 @@
 							"vector": [0, 0, 0]
 						}
 					}
+				}
+			},
+			"sound_effects": {
+				"1.875": {
+					"effect": "swing"
 				}
 			}
 		},
@@ -3040,6 +3063,11 @@
 							"vector": [0, 0, 0]
 						}
 					}
+				}
+			},
+			"sound_effects": {
+				"1.1667": {
+					"effect": "swing"
 				}
 			}
 		}

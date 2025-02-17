@@ -40,7 +40,9 @@ public class OrcGroupEntity extends HostileEntity {
         return livingEntity.getType().isIn(ModTags.EntityEnemies.ORC_ENEMIES) && livingEntity.isAlive();
     };
 
-    public static boolean canSpawn(EntityType<? extends OrcGroupEntity> type, WorldAccess world, SpawnReason spawnReason, BlockPos pos, Random random) {
-        return world.getLightLevel(LightType.BLOCK, pos) <= 8 && canSpawnIgnoreLightLevel(type, world, spawnReason, pos, random);
+    @Override
+    public boolean canSpawn(WorldAccess world, SpawnReason spawnReason) {
+        // Allow spawning in any light level and on solid ground
+        return world.getBlockState(this.getBlockPos().down()).isSolidBlock(world, this.getBlockPos().down());
     }
 }

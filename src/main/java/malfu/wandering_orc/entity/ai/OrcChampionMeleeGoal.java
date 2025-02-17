@@ -1,10 +1,12 @@
 package malfu.wandering_orc.entity.ai;
 
 import malfu.wandering_orc.entity.custom.OrcChampionEntity;
-import malfu.wandering_orc.entity.custom.OrcWarriorEntity;
 import malfu.wandering_orc.util.MobMoveUtil;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
@@ -44,7 +46,10 @@ public class OrcChampionMeleeGoal extends Goal {
     }
 
     private void shieldAttack() {
-        this.orc.tryAttack(target);
+        if(this.orc.tryAttack(target)) {
+            target.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 20, 5));
+        }
+
         this.orc.playSound(SoundEvents.ITEM_SHIELD_BLOCK, 0.7F, 0.7F);
     }
 
@@ -56,22 +61,27 @@ public class OrcChampionMeleeGoal extends Goal {
         ((ServerWorld) this.orc.getWorld()).spawnParticles(ParticleTypes.CAMPFIRE_COSY_SMOKE, sourcePos.x, sourcePos.y, sourcePos.z, 6, 0.3, 0.2, 0.3, 0.01);
     }
 
+    private void dodgeCountdown() {
+        if (this.dodgeNoDMGTimer > 0) {
+            this.dodgeNoDMGTimer--;
+        } else {
+            orc.setInvulnerable(false);
+        }
+    }
+
     private void dodge() {
         this.orc.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 0.5F, 0.3F);
         generateParticles();
 
-        // Set invulnerability
         orc.setInvulnerable(true);
-
-        // Calculate attack direction (vector from target to orc)
-        Vec3d attackDirection = new Vec3d(orc.getX() - target.getX(), 0.2, orc.getZ() - target.getZ());
+        this.dodgeNoDMGTimer = 8;
 
         // Choose dodge direction with some randomness
         double randomAngle = orc.getRandom().nextDouble() * Math.PI; // Random angle in radians
         Vec3d dodgeDirection = new Vec3d(Math.cos(randomAngle), 0.2, Math.sin(randomAngle));
 
         // Calculate dodge distance (adjust as needed)
-        double dodgeDistance = 1.0; // Example dodge distance
+        double dodgeDistance = 1.0;
 
         // Calculate dodge velocity
         Vec3d dodgeVelocity = dodgeDirection.normalize().multiply(dodgeDistance);
@@ -115,13 +125,10 @@ public class OrcChampionMeleeGoal extends Goal {
         this.target = this.orc.getTarget();
         this.attackCooldown = Math.max(this.attackCooldown - 1, 0);
         this.dodgeCooldown = Math.max(this.dodgeCooldown - 1, 0);
+        this.dodgeCountdown();
         if (this.target == null) return;
         double distanceToTarget = this.orc.distanceTo(this.target);
         double d = getSquaredMaxAttackDistance(target);
-
-        if(distanceToTarget <= d+10) {
-            System.out.println("TEST DODGECOOLDOWN " + this.dodgeNoDMGTimer);
-        }
 
         if(this.dodgeCount >= 3) {
             this.dodgeCount = 0;
