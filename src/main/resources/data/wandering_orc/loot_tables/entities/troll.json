@@ -1,0 +1,22 @@
+{
+  "type": "minecraft_entity",
+  "pools": [
+    {
+      "rolls": 1,
+      "entries": [
+        {
+          "type": "item",
+          "name": "wandering_orc:weapon/troll_throwable",
+          "weight": 1
+        }
+      ],
+      "conditions": [
+        {
+          "condition": "minecraft:random_chance_with_looting",
+          "chance": 0.5,
+          "looting_multiplier": 1.5
+        }
+      ]
+    }
+  ]
+}
