@@ -1,0 +1,18 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "wandering_orc:item/weapon/troll_throwable"
+  },
+  "display": {
+    "thirdperson_righthand": {
+      "translation": [0, 3, 2],
+      "rotation": [0, 90, 45],
+      "scale": [0.6, 0.6, 0.6]
+    },
+    "thirdperson_lefthand": {
+      "translation": [0, 3, 2],
+      "rotation": [0, -90, -45],
+      "scale": [0.6, 0.6, 0.6]
+    }
+  }
+}

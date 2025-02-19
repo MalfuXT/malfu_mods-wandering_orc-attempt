@@ -27,17 +27,22 @@ public class OrcGroupEntity extends HostileEntity {
         this.leader = leader;
     }
 
+    public String getTeamOrc() {
+        return "orc_team"; // orc Grouping for projectiles
+    }
+
     public static final Predicate<LivingEntity> TARGET_ORC_ENEMIES = (livingEntity) -> {
         if (!(livingEntity instanceof MobEntity)) {  // Check if it's a MobEntity
             return false;
         }
 
-        World world = livingEntity.getWorld();
-        if (!(world instanceof ServerWorld serverWorld)) { // Check if it's a ServerWorld
+        // Check if the entity is alive
+        if (!livingEntity.isAlive()) {
             return false;
         }
 
-        return livingEntity.getType().isIn(ModTags.EntityEnemies.ORC_ENEMIES) && livingEntity.isAlive();
+        // Check if the entity's type is in the validated list
+        return ModTags.VALID_ORC_ENEMIES.contains(livingEntity.getType());
     };
 
     @Override

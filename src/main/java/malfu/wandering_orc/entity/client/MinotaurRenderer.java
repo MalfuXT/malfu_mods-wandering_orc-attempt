@@ -11,6 +11,6 @@ public class MinotaurRenderer extends GeoEntityRenderer<MinotaurEntity> {
 
     @Override
     public float getMotionAnimThreshold(MinotaurEntity animatable) {
-        return 0.010F; // Adjust this value as needed
+        return 0.008F; // Adjust this value as needed
     }
 }

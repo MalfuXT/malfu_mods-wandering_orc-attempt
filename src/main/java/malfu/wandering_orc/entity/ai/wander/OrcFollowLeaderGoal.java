@@ -11,24 +11,36 @@ import net.minecraft.world.World;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Random;
 
 public class OrcFollowLeaderGoal extends Goal {
     private final MobEntity mob;
+    private int timer;
 
     public OrcFollowLeaderGoal(MobEntity mob) {
         this.mob = mob;
     }
 
+    private void CountdownToFollow() {
+        if (this.timer > 0) {
+            this.timer--;
+        } else {
+            Random random = new Random();
+            this.timer = 60 + random.nextInt(61);
+        }
+    }
+
     @Override
     public boolean canStart() {
         LivingEntity leader = findNearestLeader(mob);
-        return leader != null && mob.distanceTo(leader) > 10.0f;
+        return leader != null && mob.distanceTo(leader) > 15.0f;
     }
 
     @Override
     public void tick() {
         LivingEntity leader = findNearestLeader(mob);
-        if (leader != null) {
+        this.CountdownToFollow();
+        if (leader != null && this.timer < 1) {
             if(!(this.mob.distanceTo(leader) < 4)) {
                 mob.getNavigation().startMovingTo(leader.getX(), leader.getY(), leader.getZ(), 1.0);
             }

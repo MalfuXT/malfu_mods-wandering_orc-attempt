@@ -1,6 +1,8 @@
-// 1.20.1	2025-02-09T12:28:10.9308124	Wandering Orc/Model Definitions
+// 1.20.1	2025-02-18T21:05:20.0314986	Wandering Orc/Model Definitions
+b7d6df078103ab38b790cd530a8c13bbaec13c3a assets\wandering_orc\models\item\netherite_armor_piece.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets\wandering_orc\models\item\orc_warrior_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets\wandering_orc\models\item\orc_archer_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets\wandering_orc\models\item\troll_spawn_egg.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets\wandering_orc\models\item\orc_champion_spawn_egg.json
+34b2c1eab808afbb249f8c02920bb03bc35e2b13 assets\wandering_orc\models\item\weapon\troll_throwable.json
 63ec6c618a3a23eab4cab9c52d7d3250de9b516e assets\wandering_orc\models\item\minotaur_spawn_egg.json

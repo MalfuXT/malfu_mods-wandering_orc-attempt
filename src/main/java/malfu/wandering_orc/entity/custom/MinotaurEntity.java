@@ -4,6 +4,7 @@ import malfu.wandering_orc.entity.ai.CrossOrcRevengeGoal;
 import malfu.wandering_orc.entity.ai.MinotaurMeleeGoal;
 import malfu.wandering_orc.entity.ai.OrcChampionMeleeGoal;
 import malfu.wandering_orc.entity.ai.OrcWarriorMeleeGoal;
+import malfu.wandering_orc.entity.ai.wander.OrcFollowLeaderGoal;
 import malfu.wandering_orc.sound.ModSounds;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -69,15 +70,16 @@ public class MinotaurEntity extends OrcGroupEntity implements GeoEntity {
         return OrcGroupEntity.createHostileAttributes()
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 80.0D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 14.0f)
-                .add(EntityAttributes.GENERIC_ARMOR, 4.0f)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 16.0f)
+                .add(EntityAttributes.GENERIC_ARMOR, 5.0f)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5f);
     }
 
     @Override
     protected void initGoals() {
         this.goalSelector.add(1, new SwimGoal(this));
-        this.goalSelector.add(3, new MinotaurMeleeGoal(this, 1.2));
+        this.goalSelector.add(2, new MinotaurMeleeGoal(this, 1.2));
+        this.goalSelector.add(3, new OrcFollowLeaderGoal(this));
         this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0D));
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.add(6, new LookAroundGoal(this));

@@ -73,7 +73,7 @@ public class TrollEntity extends OrcGroupEntity implements GeoEntity {
         return OrcGroupEntity.createHostileAttributes()
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 28.0D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 6.0f)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0f)
                 .add(EntityAttributes.GENERIC_ARMOR, 1.0f)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.1f);
     }
@@ -82,7 +82,7 @@ public class TrollEntity extends OrcGroupEntity implements GeoEntity {
     protected void initGoals() {
         this.goalSelector.add(1, new SwimGoal(this));
         this.goalSelector.add(3, new TrollThrowGoal(this, 1.1));
-        this.goalSelector.add(4, new OrcFollowLeaderGoal(this));
+        this.goalSelector.add(3, new OrcFollowLeaderGoal(this));
         this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0D));
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
         this.goalSelector.add(6, new LookAroundGoal(this));

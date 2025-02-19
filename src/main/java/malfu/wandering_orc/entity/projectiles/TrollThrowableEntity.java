@@ -1,7 +1,10 @@
 package malfu.wandering_orc.entity.projectiles;
 
 import malfu.wandering_orc.entity.ModEntities;
+import malfu.wandering_orc.entity.custom.OrcGroupEntity;
 import malfu.wandering_orc.item.ModItems;
+import net.minecraft.block.BlockState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
@@ -10,6 +13,8 @@ import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.hit.EntityHitResult;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Direction;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -23,7 +28,7 @@ public class TrollThrowableEntity extends PersistentProjectileEntity implements 
 
     public TrollThrowableEntity(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
         super(entityType, world);
-        this.damage = 8.0f;  // Default value for the projectile
+        this.damage = 7.0f;  // Default value for the projectile
     }
 
     public TrollThrowableEntity(World world, LivingEntity owner, float damage) {
@@ -35,15 +40,29 @@ public class TrollThrowableEntity extends PersistentProjectileEntity implements 
     protected void onEntityHit(EntityHitResult entityHitResult) {
         // Do not call super.onEntityHit() to prevent the default sound
         if (!this.getWorld().isClient) {
+            Entity target = entityHitResult.getEntity();
+
+            // IGNORE PROJECTILE COLLISION AGAINTS TEAMATES OF ORC
+            if (target instanceof OrcGroupEntity && this.getOwner() instanceof OrcGroupEntity) {
+                OrcGroupEntity orcTarget = (OrcGroupEntity) target;
+                OrcGroupEntity shooter = (OrcGroupEntity) this.getOwner();
+
+                if (orcTarget.getTeamOrc().equals(shooter.getTeamOrc())) {
+                    return; // Ignore the hit if the target is in the same group
+                }
+            }
+
             // Inflict damage and play the custom sound on entity impact
-            if (entityHitResult.getEntity() instanceof LivingEntity) {
-                LivingEntity target = (LivingEntity) entityHitResult.getEntity();
-                target.damage(this.getDamageSources().thrown(this, this.getOwner()), this.damage);
+            if (target instanceof LivingEntity) {
+                LivingEntity livingTarget = (LivingEntity) target;
+                livingTarget.damage(this.getDamageSources().thrown(this, this.getOwner()), this.damage);
             }
 
             // Play the custom sound
             this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.BLOCK_CHAIN_HIT,
-                    SoundCategory.NEUTRAL, 0.65f, 0.80f);
+                    SoundCategory.NEUTRAL, 0.55f, 1.20f);
+            this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.BLOCK_MUD_BRICKS_STEP,
+                    SoundCategory.NEUTRAL, 0.55f, 2.00f);
         }
     }
 
@@ -53,9 +72,37 @@ public class TrollThrowableEntity extends PersistentProjectileEntity implements 
         if (!this.getWorld().isClient) {
             // Play the custom sound on block impact
             this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.BLOCK_CHAIN_HIT,
-                    SoundCategory.NEUTRAL, 0.65f, 0.80f);
+                    SoundCategory.NEUTRAL, 0.45f, 1.20f);
         }
         this.discard();
+    }
+
+    //SO ANIMATION WILL DETECT WHEN TO STOP BY SCAN AROUND BLOCK
+    private boolean isOnAnyBlock() {
+        BlockPos pos = this.getBlockPos();
+        // Check the current block
+        BlockState state = this.getWorld().getBlockState(pos);
+        if (!state.isAir()) {
+            return true;
+        }
+        // Check adjacent blocks within a 1-block radius
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -1; z <= 1; z++) {
+                    if (x == 0 && y == 0 && z == 0) {
+                        continue; // Skip the current block position
+                    }
+
+                    BlockPos offsetPos = pos.add(x, y, z);
+                    state = this.getWorld().getBlockState(offsetPos);
+                    if (!state.isAir()) {
+                        return true;
+                    }
+                }
+            }
+        }
+
+        return false;
     }
 
     @Override
@@ -64,7 +111,9 @@ public class TrollThrowableEntity extends PersistentProjectileEntity implements 
     }
 
     private PlayState predicate(AnimationState animationState) {
-        animationState.getController().setAnimation(RawAnimation.begin().then("animation.troll_throwable.throw", Animation.LoopType.LOOP));
+        if(!this.isOnAnyBlock()) {
+            animationState.getController().setAnimation(RawAnimation.begin().then("animation.troll_throwable.throw", Animation.LoopType.LOOP));
+        } animationState.getController().stop();
         return PlayState.CONTINUE;
     }
 

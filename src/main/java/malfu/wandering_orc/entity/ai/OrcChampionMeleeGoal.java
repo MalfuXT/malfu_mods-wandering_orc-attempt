@@ -144,7 +144,7 @@ public class OrcChampionMeleeGoal extends Goal {
 
         if(this.attackCondition == 0) {
             this.randomizer = Math.random();
-            if(this.randomizer < 0.3 && this.dodgeCooldown == 0) {
+            if(this.randomizer < 0.5 && this.dodgeCooldown == 0) {
                 this.orc.setAttackName("animation.orc_champion.dodge");
                 this.attackCondition = 99;
             } else {
@@ -206,7 +206,6 @@ public class OrcChampionMeleeGoal extends Goal {
             if(distanceToTarget <= d && this.attackCooldown == 0) {
                 this.attackCooldown = initiallongercd;
                 this.orc.setTrigger(true);
-                this.orc.speed -= 1.3;
 
             } else if (distanceToTarget <= d && this.attackCooldown == initiallongercd-movecombo1) {
                 this.attackNormal();
@@ -224,7 +223,6 @@ public class OrcChampionMeleeGoal extends Goal {
                 this.attackCondition = 0;
 
             } else if (this.attackCooldown <= 40) {
-                this.orc.speed += 1.3;
             }
         }
 

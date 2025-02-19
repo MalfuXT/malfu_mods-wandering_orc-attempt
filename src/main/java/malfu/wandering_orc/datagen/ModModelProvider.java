@@ -6,6 +6,7 @@ import net.fabricmc.fabric.api.datagen.v1.provider.FabricModelProvider;
 import net.minecraft.data.client.BlockStateModelGenerator;
 import net.minecraft.data.client.ItemModelGenerator;
 import net.minecraft.data.client.Model;
+import net.minecraft.data.client.Models;
 import net.minecraft.util.Identifier;
 
 import java.util.Optional;
@@ -23,6 +24,11 @@ public class ModModelProvider extends FabricModelProvider {
     @Override
     public void generateItemModels(ItemModelGenerator itemModelGenerator) {
 
+        //ITEMS
+        itemModelGenerator.register(ModItems.TROLL_THROWABLE_ITEM, Models.HANDHELD);
+        itemModelGenerator.register(ModItems.NETHERITE_ARMOR_PIECE, Models.HANDHELD);
+
+        //SPAWN EGGS
         itemModelGenerator.register(ModItems.ORC_ARCHER_SPAWN_EGG,
                 new Model(Optional.of(new Identifier("item/template_spawn_egg")), Optional.empty()));
         itemModelGenerator.register(ModItems.ORC_WARRIOR_SPAWN_EGG,

@@ -56,29 +56,4 @@ public class AreaDamage {
             }
         }
     }
-
-    //initially to give random block rotation like broken ground effect just like in epic fight but i don't figure it out yet.
-    // it does rotate but only the HORIZONTAL_FACING block like stair only to like reset the rotation.
-    public static void rotateBlocksBelow(LivingEntity mob) {
-        BlockPos mobPos = mob.getBlockPos();
-
-        for (int xOffset = -1; xOffset <= 1; xOffset++) {
-            for (int zOffset = -1; zOffset <= 1; zOffset++) {
-                BlockPos pos = new BlockPos(mobPos.getX() + xOffset, mobPos.getY() - 1, mobPos.getZ() + zOffset);
-                BlockState state = mob.getWorld().getBlockState(pos);
-
-                if (state.contains(Properties.HORIZONTAL_FACING)) {
-                    Direction currentFacing = state.get(Properties.HORIZONTAL_FACING);
-                    Direction newFacing = rotateDirectionRandomly(currentFacing, 35);
-                    mob.getWorld().setBlockState(pos, state.with(Properties.HORIZONTAL_FACING, newFacing));
-                }
-            }
-        }
-    }
-
-    private static Direction rotateDirectionRandomly(Direction currentFacing, int maxDegrees) {
-        Random random = new Random();
-        int rotation = random.nextInt(maxDegrees * 2 + 1) - maxDegrees;
-        return Direction.fromRotation(currentFacing.getHorizontal() + rotation);
-    }
 }

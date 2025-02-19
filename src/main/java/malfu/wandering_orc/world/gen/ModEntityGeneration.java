@@ -15,23 +15,31 @@ import net.minecraft.world.biome.BiomeKeys;
 public class ModEntityGeneration {
 
     public static void addSpawns() {
-        BiomeModifications.addSpawn(BiomeSelectors.foundInOverworld().or(BiomeSelectors.foundInTheNether()),
+        BiomeModifications.addSpawn(BiomeSelectors.foundInOverworld(),
                 SpawnGroup.MONSTER, ModEntities.ORC_ARCHER, 7, 2, 3);
+        BiomeModifications.addSpawn(BiomeSelectors.foundInTheNether(),
+                SpawnGroup.MONSTER, ModEntities.ORC_ARCHER, 4, 2, 3);
         SpawnRestriction.register(ModEntities.ORC_ARCHER, SpawnRestriction.Location.ON_GROUND,
                 Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, OrcGroupEntity::canMobSpawn);
 
-        BiomeModifications.addSpawn(BiomeSelectors.foundInOverworld().or(BiomeSelectors.foundInTheNether()),
+        BiomeModifications.addSpawn(BiomeSelectors.foundInOverworld(),
                 SpawnGroup.MONSTER, ModEntities.ORC_WARRIOR, 6, 1, 2);
+        BiomeModifications.addSpawn(BiomeSelectors.foundInTheNether(),
+                SpawnGroup.MONSTER, ModEntities.ORC_WARRIOR, 3, 1, 2);
         SpawnRestriction.register(ModEntities.ORC_WARRIOR, SpawnRestriction.Location.ON_GROUND,
                 Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, HostileEntity::canSpawnIgnoreLightLevel);
 
-        BiomeModifications.addSpawn(BiomeSelectors.foundInOverworld().or(BiomeSelectors.foundInTheNether()),
-                SpawnGroup.MONSTER, ModEntities.ORC_CHAMPION, 2, 1, 1);
+        BiomeModifications.addSpawn(BiomeSelectors.foundInOverworld(),
+                SpawnGroup.MONSTER, ModEntities.ORC_CHAMPION, 1, 1, 1);
+        BiomeModifications.addSpawn(BiomeSelectors.foundInTheNether(),
+                SpawnGroup.MONSTER, ModEntities.ORC_CHAMPION, 3, 1, 1);
         SpawnRestriction.register(ModEntities.ORC_CHAMPION, SpawnRestriction.Location.ON_GROUND,
                 Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, OrcGroupEntity::canSpawnIgnoreLightLevel);
 
-        BiomeModifications.addSpawn(BiomeSelectors.foundInOverworld().or(BiomeSelectors.foundInTheNether()),
+        BiomeModifications.addSpawn(BiomeSelectors.foundInOverworld(),
                 SpawnGroup.MONSTER, ModEntities.TROLL, 7, 1, 3);
+        BiomeModifications.addSpawn(BiomeSelectors.foundInTheNether(),
+                SpawnGroup.MONSTER, ModEntities.TROLL, 4, 1, 3);
         SpawnRestriction.register(ModEntities.TROLL, SpawnRestriction.Location.ON_GROUND,
                 Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (type, world, reason, pos, random) -> {
                     // Custom spawning logic
@@ -48,8 +56,10 @@ public class ModEntityGeneration {
                     return HostileEntity.canSpawnIgnoreLightLevel(type, world, reason, pos, random);
                 });
 
-        BiomeModifications.addSpawn(BiomeSelectors.foundInOverworld().or(BiomeSelectors.foundInTheNether()),
+        BiomeModifications.addSpawn(BiomeSelectors.foundInOverworld(),
                 SpawnGroup.MONSTER, ModEntities.MINOTAUR, 3, 1, 1);
+        BiomeModifications.addSpawn(BiomeSelectors.foundInTheNether(),
+                SpawnGroup.MONSTER, ModEntities.MINOTAUR, 2, 1, 1);
         SpawnRestriction.register(ModEntities.MINOTAUR, SpawnRestriction.Location.ON_GROUND, Heightmap.Type.MOTION_BLOCKING_NO_LEAVES, (type, world, spawnReason, pos, random) -> {
             if(world.getDifficulty() == Difficulty.PEACEFUL) {
                 return false;

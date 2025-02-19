@@ -16,7 +16,9 @@ import net.minecraft.util.Identifier;
 public class ModItems {
 
     public static final Item TROLL_THROWABLE_ITEM = registerItem("weapon/troll_throwable",
-            new TrollThrowableItem(new FabricItemSettings().maxCount(8)));
+            new TrollThrowableItem(new FabricItemSettings().maxCount(16)));
+    public static final Item NETHERITE_ARMOR_PIECE = registerItem("netherite_armor_piece",
+            new Item(new FabricItemSettings()));
 
     public static final Item ORC_ARCHER_SPAWN_EGG = registerItem("orc_archer_spawn_egg",
             new SpawnEggItem(ModEntities.ORC_ARCHER, 0x476338, 0x000000  ,new FabricItemSettings()));
@@ -35,6 +37,8 @@ public class ModItems {
         entries.add(MINOTAUR_SPAWN_EGG);
         entries.add(TROLL_SPAWN_EGG);
         entries.add(ORC_CHAMPION_SPAWN_EGG);
+        entries.add(NETHERITE_ARMOR_PIECE);
+        entries.add(TROLL_THROWABLE_ITEM);
     }
 
     private static Item registerItem(String name, Item item) {

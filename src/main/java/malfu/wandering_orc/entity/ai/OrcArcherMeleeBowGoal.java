@@ -2,6 +2,7 @@ package malfu.wandering_orc.entity.ai;
 
 import malfu.wandering_orc.entity.custom.OrcArcherEntity;
 import malfu.wandering_orc.entity.custom.OrcGroupEntity;
+import malfu.wandering_orc.entity.projectiles.OrcArrowEntity;
 import malfu.wandering_orc.sound.ModSounds;
 import malfu.wandering_orc.util.MobMoveUtil;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -110,10 +111,10 @@ public class OrcArcherMeleeBowGoal extends Goal {
 
             if (distanceToTarget <= 15 && this.attackCooldown <= 0) {
                 this.orc.getNavigation().startMovingTo(target, 0.1f);
-                this.orc.setAttackName("animation.orc_archer.bow_attack");
                 this.attackCooldown = 80;
                 this.orc.setTrigger(true);
             } else if (distanceToTarget <= 15 && this.attackCooldown == 64){
+                this.orc.getLookControl().lookAt(target.getX(), target.getEyeY(), target.getZ());
                 World world = this.orc.getWorld();
                 ItemStack arrowStack = this.orc.getProjectileType(new ItemStack(Items.ARROW));
                 PersistentProjectileEntity arrow = createArrow(world, arrowStack);
@@ -128,7 +129,7 @@ public class OrcArcherMeleeBowGoal extends Goal {
 
                 this.orc.setTrigger(false);
                 this.orc.playSound(SoundEvents.ITEM_CROSSBOW_SHOOT, 1.0F, 1.0F);
-            } else if (distanceToTarget > 12) {
+            } else if (distanceToTarget > 14) {
                 this.orc.getNavigation().startMovingTo(this.target, this.speed);
 
             } else if (this.attackCooldown <= 60 && distanceToTarget < 7) {
@@ -159,9 +160,7 @@ public class OrcArcherMeleeBowGoal extends Goal {
     }
 
     private PersistentProjectileEntity createArrow(World world, ItemStack arrowStack) {
-        ArrowEntity arrow = new ArrowEntity(world, this.orc); // Use ArrowEntity
-        arrow.setDamage(4.0); // Adjust damage
-        // ... other arrow customizations if needed (e.g., pickup type) ...
+        OrcArrowEntity arrow = new OrcArrowEntity(world, this.orc, 5); //SET DAMAGE HERE
         return arrow;
     }
 }

@@ -9,5 +9,8 @@
   "item.wandering_orc.orc_warrior_spawn_egg": "Orc Warrior Spawn Egg",
   "item.wandering_orc.minotaur_spawn_egg": "Minotaur Spawn Egg",
   "item.wandering_orc.orc_champion_spawn_egg": "Orc Champion Spawn Egg",
-  "item.wandering_orc.troll_spawn_egg": "Troll Spawn Egg"
+  "item.wandering_orc.troll_spawn_egg": "Troll Spawn Egg",
+
+  "item.wandering_orc.weapon.troll_throwable": "Leaf Knife",
+  "item.wandering_orc.netherite_armor_piece": "Netherite Armor Piece"
 }
