@@ -8,6 +8,7 @@ import malfu.wandering_orc.util.MobMoveUtil;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
@@ -85,6 +86,7 @@ public class OrcArcherMeleeBowGoal extends Goal {
         this.attackCooldown = Math.max(this.attackCooldown - 1, 0);
         if (this.target == null) return;
         double distanceToTarget = this.orc.distanceTo(this.target);
+        this.orc.getLookControl().lookAt(target.getX(), target.getEyeY(), target.getZ());
 
         if(this.attackCondition == 0) {
             this.randomizer = Math.random();
@@ -105,16 +107,11 @@ public class OrcArcherMeleeBowGoal extends Goal {
         }
 
         if(this.attackCondition == 1) {
-            if (target != null) {
-                this.orc.getLookControl().lookAt(this.target, 10.0F, 10.0F);
-            }
-
             if (distanceToTarget <= 15 && this.attackCooldown <= 0) {
                 this.orc.getNavigation().startMovingTo(target, 0.1f);
                 this.attackCooldown = 80;
                 this.orc.setTrigger(true);
             } else if (distanceToTarget <= 15 && this.attackCooldown == 64){
-                this.orc.getLookControl().lookAt(target.getX(), target.getEyeY(), target.getZ());
                 World world = this.orc.getWorld();
                 ItemStack arrowStack = this.orc.getProjectileType(new ItemStack(Items.ARROW));
                 PersistentProjectileEntity arrow = createArrow(world, arrowStack);
@@ -129,8 +126,9 @@ public class OrcArcherMeleeBowGoal extends Goal {
 
                 this.orc.setTrigger(false);
                 this.orc.playSound(SoundEvents.ITEM_CROSSBOW_SHOOT, 1.0F, 1.0F);
-            } else if (distanceToTarget > 14) {
-                this.orc.getNavigation().startMovingTo(this.target, this.speed);
+            } else if (distanceToTarget > 15) {
+                Path path = this.orc.getNavigation().findPathTo(target, 3);
+                this.orc.getNavigation().startMovingAlong(path, this.speed);
 
             } else if (this.attackCooldown <= 60 && distanceToTarget < 7) {
                 MobMoveUtil.circleTarget(orc, target, 3, speed);
@@ -149,7 +147,6 @@ public class OrcArcherMeleeBowGoal extends Goal {
                 this.orc.setTrigger(true);
 
             } else if (distanceToTarget <= 3 && this.attackCooldown == 65) {
-                this.orc.getLookControl().lookAt(target.getX(), target.getEyeY(), target.getZ());
                 this.punchAttack(target);
                 this.orc.setTrigger(false);
 
@@ -160,7 +157,7 @@ public class OrcArcherMeleeBowGoal extends Goal {
     }
 
     private PersistentProjectileEntity createArrow(World world, ItemStack arrowStack) {
-        OrcArrowEntity arrow = new OrcArrowEntity(world, this.orc, 5); //SET DAMAGE HERE
+        OrcArrowEntity arrow = new OrcArrowEntity(world, this.orc, 8); //SET DAMAGE HERE
         return arrow;
     }
 }

@@ -3,6 +3,7 @@ package malfu.wandering_orc;
 import malfu.wandering_orc.entity.ModEntities;
 import malfu.wandering_orc.entity.custom.*;
 import malfu.wandering_orc.item.ModItems;
+import malfu.wandering_orc.item.custom.ModItemGroups;
 import malfu.wandering_orc.sound.ModSounds;
 import malfu.wandering_orc.util.ModTags;
 import malfu.wandering_orc.world.gen.ModWorldGeneration;
@@ -40,6 +41,7 @@ public class WanderingOrc implements ModInitializer {
 		});
 
 		//ClassRegister
+		ModItemGroups.registerItemGroups();
 		ModWorldGeneration.generateModWorldGen();
 		ModSounds.registerSounds();
 		ModItems.registerModItems();

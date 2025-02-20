@@ -32,13 +32,6 @@ public class ModItems {
             new SpawnEggItem(ModEntities.ORC_CHAMPION, 0x476338, 0x402121  ,new FabricItemSettings()));
 
     private static void addItemstoIngredientItemGroup(FabricItemGroupEntries entries) {
-        entries.add(ORC_ARCHER_SPAWN_EGG);
-        entries.add(ORC_WARRIOR_SPAWN_EGG);
-        entries.add(MINOTAUR_SPAWN_EGG);
-        entries.add(TROLL_SPAWN_EGG);
-        entries.add(ORC_CHAMPION_SPAWN_EGG);
-        entries.add(NETHERITE_ARMOR_PIECE);
-        entries.add(TROLL_THROWABLE_ITEM);
     }
 
     private static Item registerItem(String name, Item item) {

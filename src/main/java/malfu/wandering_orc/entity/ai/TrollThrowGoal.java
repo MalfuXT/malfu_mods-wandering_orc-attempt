@@ -6,6 +6,7 @@ import malfu.wandering_orc.item.ModItems;
 import malfu.wandering_orc.sound.ModSounds;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
+import net.minecraft.entity.ai.pathing.Path;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.sound.SoundEvents;
@@ -105,14 +106,15 @@ public class TrollThrowGoal extends Goal {
         }
 
         if (target != null) {
-            this.orc.getLookControl().lookAt(this.target, 10.0F, 10.0F);
+            this.orc.getLookControl().lookAt(target.getX(), target.getEyeY(), target.getZ());
         }
 
-        if (distanceToTarget > 8) {
-            this.orc.getNavigation().startMovingTo(this.target, this.speed);
+        if (distanceToTarget > 9) {
+            Path path = this.orc.getNavigation().findPathTo(target, 3);
+            this.orc.getNavigation().startMovingAlong(path, this.speed);
         }
 
-        if (distanceToTarget <= 8 && this.attackCooldown <= 0) {
+        if (distanceToTarget <= 9 && this.attackCooldown <= 0) {
             this.orc.getNavigation().startMovingTo(target, 0.1f);
             this.orc.setAttackName("animation.troll.attack2");
             this.attackCooldown = attackIncreaseCD;
@@ -142,7 +144,7 @@ public class TrollThrowGoal extends Goal {
     }
 
     private PersistentProjectileEntity createThrow(World world, ItemStack arrowStack) {
-        TrollThrowableEntity trollThrow = new TrollThrowableEntity(world, this.orc, 5); // from TrollThrowableEntity, different dmg if its player item. check on item
+        TrollThrowableEntity trollThrow = new TrollThrowableEntity(world, this.orc, 6); // from TrollThrowableEntity, different dmg if its player item. check on item
         return trollThrow;
     }
 }
