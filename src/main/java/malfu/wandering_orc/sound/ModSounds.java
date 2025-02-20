@@ -20,6 +20,7 @@ public class ModSounds {
     public static SoundEvent TROLL_HURT = registerSoundEvent("troll_hurt");
     public static SoundEvent TROLL_DEATH = registerSoundEvent("troll_death");
     public static SoundEvent SWING_SOUND = registerSoundEvent("swing_sound");
+    public static SoundEvent SHIELD_STANCE = registerSoundEvent("shield_stance");
 
 
     private static SoundEvent registerSoundEvent(String name) {

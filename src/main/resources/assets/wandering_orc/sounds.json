@@ -86,5 +86,12 @@
     "sounds": [
       "wandering_orc:swing"
     ]
+  },
+  "shield_stance": {
+    "subtitle": "wandering_orc.shield_stance",
+    "sounds": [
+      "wandering_orc:shield_stance",
+      "wandering_orc:shield_stance2"
+    ]
   }
 }
