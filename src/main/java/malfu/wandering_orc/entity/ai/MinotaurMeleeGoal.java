@@ -34,7 +34,6 @@ public class MinotaurMeleeGoal extends Goal {
     private double speed;
     private int attackCondition = 0;
     double randomizer;
-    private int stopAttackCD;
 
     private int initialcooldown = 80;
     private int normalattack = 9;
@@ -89,7 +88,8 @@ public class MinotaurMeleeGoal extends Goal {
         this.orc.playSound(ModSounds.MINO_HIT, 1.0F, 1.0F);
     }
 
-    //START OF STOP ATTACK CODE
+    //START OF STOP ATTACK CODE BOOLEAN
+    private int stopAttackCD;
     private void stopAttackTrig(int stopATimer) {
         this.stopAttackCD = stopATimer;
         this.orc.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.15f);
@@ -141,6 +141,7 @@ public class MinotaurMeleeGoal extends Goal {
         double distanceToTarget = this.orc.distanceTo(this.target);
         double d = getSquaredMaxAttackDistance(target);
         this.orc.getNavigation().startMovingTo(target, speed);
+        this.orc.getLookControl().lookAt(target);
         this.stopAttack();
 
         if(distanceToTarget <= d) {
