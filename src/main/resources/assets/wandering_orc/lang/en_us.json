@@ -12,5 +12,21 @@
   "item.wandering_orc.troll_spawn_egg": "Troll Spawn Egg",
 
   "item.wandering_orc.weapon.troll_throwable": "Leaf Knife",
-  "item.wandering_orc.netherite_armor_piece": "Netherite Armor Piece"
+  "item.wandering_orc.netherite_armor_piece": "Netherite Armor Piece",
+
+  "wandering_orc.orc_death" : "Orc Death",
+  "wandering_orc.orc_hurt" : "Orc Hurt",
+  "wandering_orc.orc_hurt2" : "Orc Hurting",
+  "wandering_orc.orc_archer_punch" : "Orc Archer Punch",
+  "wandering_orc.mino_growl" : "Mino Growl",
+  "wandering_orc.mino_death" : "Mino Death",
+  "wandering_orc.mino_hit" : "Mino Hit",
+  "wandering_orc.mino_stomp" : "Mino Stomp",
+  "wandering_orc.mino_hurt" : "Mino Hurt",
+  "wandering_orc.troll_hurt" : "Troll Hurt",
+  "wandering_orc.troll_death" : "Troll Death",
+  "wandering_orc.swing_sound" : "Swing Sound",
+  "wandering_orc.shield_stance" : "Shield Stance",
+
+  "itemgroup.wandering_orc_group": "Wandering Orc"
 }
