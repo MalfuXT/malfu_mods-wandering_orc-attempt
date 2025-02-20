@@ -22,7 +22,9 @@ import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
@@ -46,12 +48,15 @@ public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
 
     public static final TrackedData<Boolean> DODGE =
             DataTracker.registerData(OrcChampionEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
+    public static final TrackedData<Boolean> SHIELD =
+            DataTracker.registerData(OrcChampionEntity.class, TrackedDataHandlerRegistry.BOOLEAN);
 
     protected void initDataTracker() {
         super.initDataTracker();
         this.dataTracker.startTracking(ATKTIMING, false);
         this.dataTracker.startTracking(ATKVARI, "animation.orc_champion.move_attack");
         this.dataTracker.startTracking(DODGE, false);
+        this.dataTracker.startTracking(SHIELD, false);
     }
 
     public boolean isDodge() {return (Boolean)this.dataTracker.get(DODGE);}
@@ -67,10 +72,11 @@ public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
 
     public static DefaultAttributeContainer.Builder setAttributes() {
         return OrcGroupEntity.createHostileAttributes()
+                .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
                 .add(EntityAttributes.GENERIC_MAX_HEALTH, 42.0D)
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 10.0f)
-                .add(EntityAttributes.GENERIC_ARMOR, 14.0f)
+                .add(EntityAttributes.GENERIC_ARMOR, 19.0f)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5f);
     }
 
@@ -91,19 +97,70 @@ public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
         this.targetSelector.add(2, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, OrcGroupEntity.TARGET_ORC_ENEMIES));
     }
 
+    //SHIELDING MECHANIC
+    private boolean isShielding = false;
+    private boolean shieldStop = false;
+
+    public boolean isAnimShielding() {return (Boolean)this.dataTracker.get(SHIELD);}
+    public void setAnimShielding(boolean shield) {this.dataTracker.set(SHIELD, shield);}
+
+    public boolean isShielding() {return isShielding;}
+    public void setShielding(boolean shielding) {this.isShielding = shielding;}
+    public boolean isShieldStop() {return shieldStop;}
+    public void setShieldStop(boolean shieldstop) {this.shieldStop = shieldstop;}
+
+    @Override
+    public boolean damage(DamageSource source, float amount) {
+        if (isShielding && isAttackFromFront(source)) {
+            // Block the attack
+            this.playSound(SoundEvents.ITEM_SHIELD_BLOCK, 1.0F, 1.0F); // Play shield block sound
+            setShielding(false); // Exit shielding stance after blocking
+            setAnimShielding(false);
+            setShieldStop(false);
+            return false; // Cancel the damage
+        }
+        return super.damage(source, amount); // Apply damage normally
+    }
+
+    private boolean isAttackFromFront(DamageSource source) {
+        if (source.getSource() instanceof LivingEntity attacker) {
+            // Calculate the angle between the attacker and the Orc Champion
+            Vec3d attackerPos = attacker.getPos();
+            Vec3d orcPos = this.getPos();
+            Vec3d directionToAttacker = attackerPos.subtract(orcPos).normalize();
+            Vec3d orcFacing = this.getRotationVector();
+
+            // Calculate the dot product to determine if the attack is from the front
+            double dotProduct = orcFacing.dotProduct(directionToAttacker);
+            return dotProduct > 0.7; // Adjust the threshold as needed
+        }
+        return false;
+    }
+    //SHIELDING MECHANIC ENDS HERE
+
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
         controllers.add(new AnimationController<>(this, "attackingstance", 0, this::attackstancePredicate));
         controllers.add(new AnimationController<>(this, "attack", 0, this::attackPredicate));
         controllers.add(new AnimationController<>(this, "dodge", 0, this::dodgePredicate));
+        controllers.add(new AnimationController<>(this, "shield", 0, this::shieldPredicate));
+    }
+
+    private <E extends GeoAnimatable> PlayState shieldPredicate(AnimationState<E> event) {
+        if (this.isAnimShielding()) {
+            event.getController().setAnimation(RawAnimation.begin().then("animation.orc_champion.shield_stance_transition", Animation.LoopType.PLAY_ONCE)
+                    .thenLoop("animation.orc_champion.shield_stance"));
+            return PlayState.CONTINUE;
+        } event.getController().forceAnimationReset();
+        return PlayState.STOP;
     }
 
     private <E extends GeoAnimatable> PlayState dodgePredicate(AnimationState<E> event) {
         if (this.isDodge()) {
             event.getController().setAnimation(RawAnimation.begin().then("animation.orc_champion.dodge", Animation.LoopType.LOOP));
             return PlayState.CONTINUE;
-        }
+        } event.getController().forceAnimationReset();
         return PlayState.STOP;
     }
 
