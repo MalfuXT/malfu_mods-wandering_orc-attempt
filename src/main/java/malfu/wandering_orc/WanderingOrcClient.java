@@ -2,6 +2,7 @@ package malfu.wandering_orc;
 
 import malfu.wandering_orc.entity.ModEntities;
 import malfu.wandering_orc.entity.client.*;
+import malfu.wandering_orc.entity.client.block_entity.BlockScanRenderer;
 import malfu.wandering_orc.entity.client.projectiles.TrollThrowableRenderer;
 import malfu.wandering_orc.entity.projectiles.TrollThrowableEntity;
 import net.fabricmc.api.ClientModInitializer;
@@ -21,6 +22,8 @@ public class WanderingOrcClient implements ClientModInitializer {
 
         //Projectile Entities
         EntityRendererRegistry.register(ModEntities.TROLL_THROWABLE, TrollThrowableRenderer::new);
+
+        EntityRendererRegistry.register(ModEntities.BLOCK_SCAN_ENTITY, BlockScanRenderer::new);
 
     }
 }

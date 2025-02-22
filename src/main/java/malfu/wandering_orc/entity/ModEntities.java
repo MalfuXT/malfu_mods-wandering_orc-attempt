@@ -1,6 +1,7 @@
 package malfu.wandering_orc.entity;
 
 import malfu.wandering_orc.WanderingOrc;
+import malfu.wandering_orc.entity.block_entity.BlockScanEntity;
 import malfu.wandering_orc.entity.custom.*;
 import malfu.wandering_orc.entity.projectiles.TrollThrowableEntity;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
@@ -43,4 +44,13 @@ public class ModEntities {
             Registries.ENTITY_TYPE, new Identifier(WanderingOrc.MOD_ID, "troll_throwable"),
             FabricEntityTypeBuilder.<TrollThrowableEntity>create(SpawnGroup.MISC, TrollThrowableEntity::new)
                     .dimensions(EntityDimensions.fixed(0.3f, 0.3f)).build());
+
+    //BLOCK ENTITY extends ENTITY
+    public static final EntityType<BlockScanEntity> BLOCK_SCAN_ENTITY = Registry.register(
+            Registries.ENTITY_TYPE,
+            new Identifier(WanderingOrc.MOD_ID, "block_scan_entity"),
+            FabricEntityTypeBuilder.create(SpawnGroup.MISC, BlockScanEntity::new)
+                    .dimensions(EntityDimensions.fixed(1.0F, 1.0F)) // Set size to 1x1x1
+                    .build()
+    );
 }

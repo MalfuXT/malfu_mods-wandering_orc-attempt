@@ -56,12 +56,14 @@ public class MinotaurMeleeGoal extends Goal {
         if (this.orc.getWorld().isClient()) {
             return;
         }
-        ((ServerWorld) this.orc.getWorld()).spawnParticles(ParticleTypes.EXPLOSION, sourcePos.x, sourcePos.y, sourcePos.z, 20, 2.0, 1.0, 2.0, 1.0);
+        ((ServerWorld) this.orc.getWorld()).spawnParticles(ParticleTypes.EXPLOSION, sourcePos.x, sourcePos.y, sourcePos.z, 20, 1.0, 1.0, 1.0, 1.0);
     }
 
     private void stompAttack() {
-        Vec3d sourcePos = orc.getPos();
+        World world = orc.getWorld();
+        BlockPos centerPos = orc.getBlockPos();
         AreaDamage.dealAreaDamageWithEffect(orc, 3, OrcGroupEntity.class, StatusEffects.SLOWNESS, 100, 3);
+        AreaDamage.AreaCrackedGround(orc, world, centerPos, 2);
         this.stompSound();
         this.generateParticles();
 
@@ -141,7 +143,7 @@ public class MinotaurMeleeGoal extends Goal {
         double distanceToTarget = this.orc.distanceTo(this.target);
         double d = getSquaredMaxAttackDistance(target);
         this.orc.getNavigation().startMovingTo(target, speed);
-        this.orc.getLookControl().lookAt(target);
+        this.orc.getLookControl().lookAt(target.getX(), target.getEyeY(), target.getZ());
         this.stopAttack();
 
         if(distanceToTarget <= d) {
@@ -228,7 +230,7 @@ public class MinotaurMeleeGoal extends Goal {
         if(this.attackCondition == 4) {
 
             if(distanceToTarget <= d && this.attackCooldown == 0) {
-                this.orc.playSound(ModSounds.MINO_GROWL, 1.0f, 1.0f);
+                this.orc.playSound(ModSounds.MINO_GROWL, 1.5f, 1.0f);
                 this.attackCooldown = initialcooldown;
                 this.orc.setTrigger(true);
                 this.stopAttackTrig(stompaoe);
