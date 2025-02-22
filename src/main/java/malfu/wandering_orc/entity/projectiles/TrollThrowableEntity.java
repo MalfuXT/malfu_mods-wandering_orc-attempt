@@ -1,6 +1,7 @@
 package malfu.wandering_orc.entity.projectiles;
 
 import malfu.wandering_orc.entity.ModEntities;
+import malfu.wandering_orc.entity.block_entity.BlockScanEntity;
 import malfu.wandering_orc.entity.custom.OrcGroupEntity;
 import malfu.wandering_orc.item.ModItems;
 import net.minecraft.block.BlockState;
@@ -68,6 +69,8 @@ public class TrollThrowableEntity extends PersistentProjectileEntity implements 
 
     @Override
     protected void onBlockHit(BlockHitResult blockHitResult) {
+        World world = this.getWorld();
+        BlockPos pos = blockHitResult.getBlockPos();
         // Do not call super.onBlockHit() to prevent the default sound
         if (!this.getWorld().isClient) {
             // Play the custom sound on block impact
@@ -76,6 +79,7 @@ public class TrollThrowableEntity extends PersistentProjectileEntity implements 
         }
         this.discard();
     }
+
 
     //SO ANIMATION WILL DETECT WHEN TO STOP BY SCAN AROUND BLOCK
     private boolean isOnAnyBlock() {

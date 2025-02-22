@@ -90,7 +90,7 @@ public class OrcWarriorMeleeGoal extends Goal {
         double distanceToTarget = this.orc.distanceTo(this.target);
         double d = getSquaredMaxAttackDistance(target);
         this.randomizer = Math.random();
-        this.orc.getLookControl().lookAt(target);
+        this.orc.getLookControl().lookAt(target.getX(), target.getEyeY(), target.getZ());
         this.orc.getNavigation().startMovingTo(target, this.speed);
         this.stopAttack();
 

@@ -89,20 +89,12 @@ public class OrcArcherMeleeBowGoal extends Goal {
         this.orc.getLookControl().lookAt(target.getX(), target.getEyeY(), target.getZ());
 
         if(this.attackCondition == 0) {
-            this.randomizer = Math.random();
             if(distanceToTarget > 3) {
                 this.orc.setAttackName("animation.orc_archer.bow_attack");
                 this.attackCondition = 1;
             } else {
-                this.randomizer = Math.random();
-                if(this.randomizer < 0.3) {
-                    this.orc.setAttackName("animation.orc_archer.bow_attack");
-                    this.attackCondition = 1;
-                } else {
-                    this.orc.setAttackName("animation.orc_archer.melee_attack");
-                    this.attackCondition = 2;
-                }
-
+                this.orc.setAttackName("animation.orc_archer.melee_attack");
+                this.attackCondition = 2;
             }
         }
 
@@ -130,17 +122,21 @@ public class OrcArcherMeleeBowGoal extends Goal {
                 Path path = this.orc.getNavigation().findPathTo(target, 3);
                 this.orc.getNavigation().startMovingAlong(path, this.speed);
 
-            } else if (this.attackCooldown <= 60 && distanceToTarget < 7) {
-                MobMoveUtil.circleTarget(orc, target, 3, speed);
-
             } else if (this.attackCooldown <= 1) {
                 this.attackCondition = 0;
+
+            } else if (this.attackCooldown <= 60 && distanceToTarget < 7) {
+                MobMoveUtil.circleTarget(orc, target, 3, speed);
             }
-        } else {
         }
 
         if(this.attackCondition == 2) {
-            this.orc.getNavigation().startMovingTo(target, this.speed);
+            if(this.attackCooldown <= 60 && this.attackCooldown >= 5) {
+                MobMoveUtil.circleTarget(orc, target, 3, speed);
+            } else {
+                this.orc.getNavigation().startMovingTo(target, this.speed);
+            }
+
             if(distanceToTarget <= 3 && this.attackCooldown == 0) {
                 this.orc.setAttackName("animation.orc_archer.melee_attack");
                 this.attackCooldown = 80;
@@ -150,7 +146,7 @@ public class OrcArcherMeleeBowGoal extends Goal {
                 this.punchAttack(target);
                 this.orc.setTrigger(false);
 
-            } else if (attackCooldown <= 1) {
+            } else if (this.attackCooldown <= 1) {
                 this.attackCondition = 0;
             }
         }

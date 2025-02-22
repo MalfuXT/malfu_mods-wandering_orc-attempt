@@ -183,7 +183,7 @@ public class OrcChampionMeleeGoal extends Goal {
         this.shieldCD = Math.max(this.shieldCD - 1, 0);
         this.dodgeCountdown();
         if (this.target == null) return;
-        this.orc.getLookControl().lookAt(target);
+        this.orc.getLookControl().lookAt(target.getX(), target.getEyeY(), target.getZ());
         double distanceToTarget = this.orc.distanceTo(this.target);
         double d = getSquaredMaxAttackDistance(target);
         this.setAttackStopped();
