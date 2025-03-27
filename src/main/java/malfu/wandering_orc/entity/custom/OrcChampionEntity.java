@@ -2,10 +2,9 @@ package malfu.wandering_orc.entity.custom;
 
 import malfu.wandering_orc.entity.ai.CrossOrcRevengeGoal;
 import malfu.wandering_orc.entity.ai.OrcChampionMeleeGoal;
-import malfu.wandering_orc.entity.ai.wander.WanderReallyFarAway;
+import malfu.wandering_orc.entity.ai.wander.WanderAroundReallyFarGoal;
 import malfu.wandering_orc.sound.ModSounds;
-import net.minecraft.block.BlockState;
-import net.minecraft.block.Blocks;
+import malfu.wandering_orc.util.config.ModBonusHealthConfig;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.*;
@@ -23,7 +22,6 @@ import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.sound.SoundEvent;
 import net.minecraft.sound.SoundEvents;
-import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 import software.bernie.geckolib.animatable.GeoEntity;
@@ -31,6 +29,7 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.ClientUtils;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
@@ -71,22 +70,22 @@ public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
     public String getAttackName() {return (String)this.dataTracker.get(ATKVARI);}
 
     public static DefaultAttributeContainer.Builder setAttributes() {
-        return OrcGroupEntity.createHostileAttributes()
+        return OrcGroupEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 42.0D)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 35.0D + ModBonusHealthConfig.orcChampionBonusHealth)
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 10.0f)
-                .add(EntityAttributes.GENERIC_ARMOR, 19.0f)
+                .add(EntityAttributes.GENERIC_ARMOR, 10.0)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5f);
     }
 
     @Override
     protected void initGoals() {
         this.goalSelector.add(1, new SwimGoal(this));
-        this.goalSelector.add(3, new OrcChampionMeleeGoal(this, 1.3));
-        this.goalSelector.add(5, new WanderReallyFarAway(this, 1.0D));
-        this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
-        this.goalSelector.add(6, new LookAroundGoal(this));
+        this.goalSelector.add(3, new OrcChampionMeleeGoal(this, 1.2f));
+        this.goalSelector.add(5, new WanderAroundReallyFarGoal(this, 1.0f, 20));
+        this.goalSelector.add(7, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
+        this.goalSelector.add(8, new LookAroundGoal(this));
         this.targetSelector.add(1, new CrossOrcRevengeGoal(this, OrcGroupEntity.class).setGroupRevenge());
         this.targetSelector.add(4, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, MerchantEntity.class, false));
@@ -116,9 +115,12 @@ public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
             this.playSound(SoundEvents.ITEM_SHIELD_BLOCK, 1.0F, 1.0F); // Play shield block sound
             setShielding(false); // Exit shielding stance after blocking
             setAnimShielding(false);
-            setShieldStop(false);
+            setShieldStop(false); //i'm trippin. it is to stop moving when shielding, but i could've just use setShielding??.
             return false; // Cancel the damage
         }
+        setShielding(false);
+        setAnimShielding(false);
+        setShieldStop(false);
         return super.damage(source, amount); // Apply damage normally
     }
 
@@ -142,7 +144,13 @@ public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
         controllers.add(new AnimationController<>(this, "attackingstance", 0, this::attackstancePredicate));
-        controllers.add(new AnimationController<>(this, "attack", 0, this::attackPredicate));
+        controllers.add(new AnimationController<>(this, "attack", 0, this::attackPredicate)
+                .setSoundKeyframeHandler((event) -> {
+            PlayerEntity player = ClientUtils.getClientPlayer();
+            if (player != null) {
+                this.getWorld().playSound(player, this.getX(), this.getY(), this.getZ(), ModSounds.SWING_LIGHT, this.getSoundCategory(),0.5F, 1.4f);
+            }
+        }));
         controllers.add(new AnimationController<>(this, "dodge", 0, this::dodgePredicate));
         controllers.add(new AnimationController<>(this, "shield", 0, this::shieldPredicate));
     }
@@ -183,9 +191,10 @@ public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
 
     private <E extends GeoAnimatable> PlayState attackstancePredicate(AnimationState<E> event) {
         if (this.isAttacking() && event.isMoving()) {
+            event.getController().setAnimationSpeed(1.3f);
             event.getController().setAnimation(RawAnimation.begin().then("animation.orc_champion.walk_target", Animation.LoopType.LOOP));
             return PlayState.CONTINUE;
-        }
+        } else event.getController().setAnimationSpeed(1.0f);
         return PlayState.STOP;
     }
 
@@ -197,6 +206,10 @@ public class OrcChampionEntity extends OrcGroupEntity implements GeoEntity {
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
         return ModSounds.ORC_HURT;
+    }
+
+    public int getXpToDrop() {
+        return 5;
     }
 
 

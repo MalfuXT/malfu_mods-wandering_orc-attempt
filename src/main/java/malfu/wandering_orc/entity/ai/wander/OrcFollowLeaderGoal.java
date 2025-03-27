@@ -1,24 +1,32 @@
 package malfu.wandering_orc.entity.ai.wander;
 
-import malfu.wandering_orc.entity.custom.MinotaurEntity;
-import malfu.wandering_orc.entity.custom.OrcChampionEntity;
-import malfu.wandering_orc.entity.custom.OrcGroupEntity;
-import malfu.wandering_orc.entity.custom.OrcWarriorEntity;
+import malfu.wandering_orc.entity.custom.*;
+import malfu.wandering_orc.util.custom_structure_util.CustomStructureKeys;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.registry.RegistryKeys;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.structure.StructureStart;
+import net.minecraft.util.math.BlockBox;
 import net.minecraft.world.World;
+import net.minecraft.world.gen.StructureAccessor;
+import net.minecraft.world.gen.structure.Structure;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
 
 public class OrcFollowLeaderGoal extends Goal {
-    private final MobEntity mob;
+    private final OrcGroupEntity orc;
+    private final ServerWorld world;
+    private final float speed = 1.2f;
     private int timer;
 
-    public OrcFollowLeaderGoal(MobEntity mob) {
-        this.mob = mob;
+    public OrcFollowLeaderGoal(OrcGroupEntity orc) {
+        this.orc = orc;
+        this.world = (ServerWorld) orc.getWorld();
     }
 
     private void CountdownToFollow() {
@@ -26,31 +34,41 @@ public class OrcFollowLeaderGoal extends Goal {
             this.timer--;
         } else {
             Random random = new Random();
-            this.timer = 60 + random.nextInt(61);
+            this.timer = 40 + random.nextInt(81);
         }
     }
 
     @Override
     public boolean canStart() {
-        LivingEntity leader = findNearestLeader(mob);
-        return leader != null && mob.distanceTo(leader) > 15.0f;
+        LivingEntity leader = findNearestLeader(orc);
+        return leader != null && orc.distanceTo(leader) > 20.0f && !orc.isAttacking() && !isInsideCamp();
+    }
+
+    @Override
+    public void start() {
+        this.orc.setChase(true);
+    }
+
+    @Override
+    public void stop() {
+        this.orc.setChase(false);
     }
 
     @Override
     public void tick() {
-        LivingEntity leader = findNearestLeader(mob);
+        LivingEntity leader = findNearestLeader(orc);
         this.CountdownToFollow();
-        if (leader != null && this.timer < 1) {
-            if(!(this.mob.distanceTo(leader) < 4)) {
-                mob.getNavigation().startMovingTo(leader.getX(), leader.getY(), leader.getZ(), 1.0);
-            }
+        if (leader != null && this.timer <= 1) {
+            if(!(this.orc.distanceTo(leader) < 4)) {
+                orc.getNavigation().startMovingTo(leader.getX(), leader.getY(), leader.getZ(), speed);
+            } else orc.getNavigation().stop();
 
         }
     }
 
     private LivingEntity findNearestLeader(MobEntity follower) {
-        // Priority order: OrcChampion, OrcWarrior, Minotaur
-        Class<?>[] leaderClasses = {OrcChampionEntity.class, OrcWarriorEntity.class, MinotaurEntity.class};
+        // Priority order: OrcChampion, Minotaur, OrcWarrior
+        Class<?>[] leaderClasses = {OrcChampionEntity.class, MinotaurEntity.class, OrcWarriorEntity.class};
 
         // Track the nearest leader and its priority
         LivingEntity nearestLeader = null;
@@ -68,7 +86,7 @@ public class OrcFollowLeaderGoal extends Goal {
             // Search for potential leaders of the current priority class
             List<LivingEntity> potentialLeaders = follower.getWorld().getEntitiesByClass(
                     (Class<LivingEntity>) leaderClass,
-                    follower.getBoundingBox().expand(42), // Search within 32 blocks
+                    follower.getBoundingBox().expand(32), // Search within 32 blocks
                     entity -> isValidLeader(entity, follower, currentPriority)); // Check if the entity is a valid leader
 
             if (!potentialLeaders.isEmpty()) {
@@ -87,7 +105,7 @@ public class OrcFollowLeaderGoal extends Goal {
 
         // If a leader is found, ensure it does not follow leaders or non-leaders of the same class
         if (nearestLeader != null && nearestLeader instanceof OrcGroupEntity) {
-            ensureSingleLeaderInArea((OrcGroupEntity) nearestLeader, follower.getWorld(), 42);
+            ensureSingleLeaderInArea((OrcGroupEntity) nearestLeader, follower.getWorld(), 32);
             ensureLeaderDoesNotFollowSameClass((OrcGroupEntity) nearestLeader);
         }
 
@@ -148,11 +166,42 @@ public class OrcFollowLeaderGoal extends Goal {
     private int getPriorityForClass(Class<?> leaderClass) {
         if (leaderClass == OrcChampionEntity.class) {
             return 0; // Highest priority
-        } else if (leaderClass == OrcWarriorEntity.class) {
-            return 1;
         } else if (leaderClass == MinotaurEntity.class) {
+            return 1;
+        } else if (leaderClass == OrcWarriorEntity.class) {
             return 2; // Lowest priority
         }
         return Integer.MAX_VALUE; // Default for unknown classes
+    }
+
+    private boolean isInsideCamp() {
+        // Check if the PoentEntity is inside the camp's bounding box
+        RegistryEntry<Structure> orcCampStructure = this.world.getRegistryManager()
+                .get(RegistryKeys.STRUCTURE)
+                .getEntry(CustomStructureKeys.ORC_CAMP)
+                .orElse(null);
+
+        if (orcCampStructure == null) {
+            return false;
+        }
+
+        StructureAccessor structureAccessor = this.world.getStructureAccessor();
+        StructureStart structureStart = structureAccessor.getStructureAt(this.orc.getBlockPos(), orcCampStructure.value());
+
+        if (structureStart != StructureStart.DEFAULT) {
+            BlockBox boundingBox = structureStart.getBoundingBox();
+            BlockBox expandedBox = new BlockBox(
+                    boundingBox.getMinX() - 32,  // West
+                    boundingBox.getMinY(),  // Down
+                    boundingBox.getMinZ() - 32,  // North
+                    boundingBox.getMaxX() + 32,  // East
+                    boundingBox.getMaxY(),  // Up
+                    boundingBox.getMaxZ() + 32   // South
+            );
+
+            return expandedBox.contains(this.orc.getBlockPos());
+        }
+
+        return false;
     }
 }

@@ -48,7 +48,7 @@ public class CrossOrcRevengeGoal extends RevengeGoal {
             } else if (mobEntity.isTeammate(mob.getAttacker())){
                 return false;
             } else {
-                return EntityPredicates.EXCEPT_SPECTATOR.test(mobEntity);
+                return EntityPredicates.EXCEPT_CREATIVE_OR_SPECTATOR.test(mobEntity);
             }
         });
 

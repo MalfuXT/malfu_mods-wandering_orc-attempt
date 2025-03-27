@@ -1,14 +1,12 @@
 package malfu.wandering_orc.entity.custom;
 
 import malfu.wandering_orc.entity.ai.CrossOrcRevengeGoal;
-import malfu.wandering_orc.entity.ai.OrcArcherMeleeBowGoal;
-import malfu.wandering_orc.entity.ai.OrcWarriorMeleeGoal;
 import malfu.wandering_orc.entity.ai.TrollThrowGoal;
 import malfu.wandering_orc.entity.ai.wander.OrcFollowLeaderGoal;
 import malfu.wandering_orc.sound.ModSounds;
+import malfu.wandering_orc.util.config.ModBonusHealthConfig;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.SpawnReason;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -22,14 +20,8 @@ import net.minecraft.entity.mob.ZombieEntity;
 import net.minecraft.entity.passive.IronGolemEntity;
 import net.minecraft.entity.passive.MerchantEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvent;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.Difficulty;
-import net.minecraft.world.ServerWorldAccess;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldAccess;
 import software.bernie.geckolib.animatable.GeoEntity;
 import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
@@ -70,19 +62,19 @@ public class TrollEntity extends OrcGroupEntity implements GeoEntity {
     public String getAttackName() {return (String)this.dataTracker.get(ATKVARI);}
 
     public static DefaultAttributeContainer.Builder setAttributes() {
-        return OrcGroupEntity.createHostileAttributes()
+        return OrcGroupEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 28.0D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0f)
-                .add(EntityAttributes.GENERIC_ARMOR, 1.0f)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 21.0D + ModBonusHealthConfig.trollBonusHealth)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 3.0f)
+                .add(EntityAttributes.GENERIC_ARMOR, 1.0)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.1f);
     }
 
     @Override
     protected void initGoals() {
         this.goalSelector.add(1, new SwimGoal(this));
-        this.goalSelector.add(3, new TrollThrowGoal(this, 1.1));
+        this.goalSelector.add(3, new TrollThrowGoal(this, 1.2));
         this.goalSelector.add(3, new OrcFollowLeaderGoal(this));
         this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0D));
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
@@ -115,6 +107,12 @@ public class TrollEntity extends OrcGroupEntity implements GeoEntity {
     private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> event) {
         this.animationTick = Math.max(this.animationTick - 1, 0);
 
+        float speed = ((OrcGroupEntity) event.getAnimatable()).getDataTracker().get(SPEED);
+        if (speed >= 1.2f) {
+            event.getController().setAnimationSpeed(1.4f);
+        } else {
+            event.getController().setAnimationSpeed(1.0f);
+        }
 
         if (event.isMoving()) {
             event.getController().setAnimation(RawAnimation.begin().then("animation.troll.walk", Animation.LoopType.LOOP));
@@ -146,6 +144,9 @@ public class TrollEntity extends OrcGroupEntity implements GeoEntity {
         return ModSounds.TROLL_HURT;
     }
 
+    public int getXpToDrop() {
+        return 3;
+    }
 
 
     @Override

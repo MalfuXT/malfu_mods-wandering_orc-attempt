@@ -22,7 +22,7 @@ public class TrollThrowableItem extends Item {
 
         world.playSound(null, player.getX(), player.getY(), player.getZ(), SoundEvents.ENTITY_SNOWBALL_THROW, SoundCategory.NEUTRAL, 0.5F, 1.0F);
 
-        if (!world.isClient) {
+        if (!world.isClient()) {
             TrollThrowableEntity trollThrowableEntity = new TrollThrowableEntity(world, player, 5);
 
             Vec3d direction = player.getRotationVec(1.0F);

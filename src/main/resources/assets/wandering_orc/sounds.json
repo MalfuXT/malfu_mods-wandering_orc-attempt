@@ -87,11 +87,163 @@
       "wandering_orc:swing"
     ]
   },
+  "swing_light": {
+    "subtitle": "wandering_orc.swing_light",
+    "sounds": [
+      "wandering_orc:swing2",
+      "wandering_orc:swing3",
+      "wandering_orc:swing4",
+      "wandering_orc:swing5",
+      "wandering_orc:swing6"
+    ]
+  },
   "shield_stance": {
     "subtitle": "wandering_orc.shield_stance",
     "sounds": [
       "wandering_orc:shield_stance",
       "wandering_orc:shield_stance2"
+    ]
+  },
+  "fireball_impact": {
+    "subtitle": "wandering_orc.fireball_impact",
+    "sounds": [
+      "wandering_orc:fireball_impact",
+      "wandering_orc:fireball_impact2"
+    ]
+  },
+  "fireball_shoot": {
+    "subtitle": "wandering_orc.fireball_shoot",
+    "sounds": [
+      "wandering_orc:fireball_shoot",
+      "wandering_orc:fireball_shoot2"
+    ]
+  },
+  "fireball_charge": {
+    "subtitle": "wandering_orc.fireball_charge",
+    "sounds": [
+      "wandering_orc:fireball_charge"
+    ]
+  },
+  "magic_impact": {
+    "subtitle": "wandering_orc.magic_impact",
+    "sounds": [
+      "wandering_orc:magic_impact",
+      "wandering_orc:magic_impact2"
+    ]
+  },
+  "magic_charge": {
+    "subtitle": "wandering_orc.magic_charge",
+    "sounds": [
+      "wandering_orc:magic_charge"
+    ]
+  },
+  "magic_shoot": {
+    "subtitle": "wandering_orc.magic_shoot",
+    "sounds": [
+      "wandering_orc:magic_shoot"
+    ]
+  },
+  "summon_charge": {
+    "subtitle": "wandering_orc.summon_charge",
+    "sounds": [
+      "wandering_orc:summon_charge"
+    ]
+  },
+  "summon": {
+    "subtitle": "wandering_orc.summon",
+    "sounds": [
+      "wandering_orc:summon"
+    ]
+  },
+  "heal": {
+    "subtitle": "wandering_orc.heal",
+    "sounds": [
+      "wandering_orc:heal"
+    ]
+  },
+  "area_heal": {
+    "subtitle": "wandering_orc.area_heal",
+    "sounds": [
+      "wandering_orc:area_heal"
+    ]
+  },
+  "poent_hurt": {
+    "subtitle": "wandering_orc.poent_hurt",
+    "sounds": [
+      "wandering_orc:poent_hurt",
+      "wandering_orc:poent_hurt2"
+    ]
+  },
+  "poent_death": {
+    "subtitle": "wandering_orc.poent_death",
+    "sounds": [
+      "wandering_orc:poent_death",
+      "wandering_orc:poent_death2"
+    ]
+  },
+  "poent_done": {
+    "subtitle": "wandering_orc.poent_done",
+    "sounds": [
+      "wandering_orc:poent_done",
+      "wandering_orc:poent_done2",
+      "wandering_orc:poent_done3",
+      "wandering_orc:poent_done4"
+    ]
+  },
+  "poent_complaint": {
+    "subtitle": "wandering_orc.poent_complaint",
+    "sounds": [
+      "wandering_orc:poent_complaint",
+      "wandering_orc:poent_complaint2"
+    ]
+  },
+  "poent_ambience": {
+    "subtitle": "wandering_orc.poent_ambience",
+    "sounds": [
+      "wandering_orc:poent_ambience",
+      "wandering_orc:poent_ambience2",
+      "wandering_orc:poent_ambience3"
+    ]
+  },
+  "firelink_ambience": {
+    "subtitle": "wandering_orc.firelink_ambience",
+    "sounds": [
+      "wandering_orc:firelink_ambient",
+      "wandering_orc:firelink_ambient2"
+    ]
+  },
+  "firelink_hurt": {
+    "subtitle": "wandering_orc.firelink_hurt",
+    "sounds": [
+      "wandering_orc:firelink_hurt",
+      "wandering_orc:firelink_hurt2",
+      "wandering_orc:firelink_hurt3",
+      "wandering_orc:firelink_hurt4"
+    ]
+  },
+  "firelink_swing": {
+    "subtitle": "wandering_orc.firelink_swing",
+    "sounds": [
+      "wandering_orc:firelink_swing",
+      "wandering_orc:firelink_swing2"
+    ]
+  },
+  "sharp_impact": {
+    "subtitle": "wandering_orc.sharp_impact",
+    "sounds": [
+      "wandering_orc:sharp_impact"
+    ]
+  },
+  "fireball_travel": {
+    "subtitle": "wandering_orc.fireball_travel",
+    "sounds": [
+      "wandering_orc:fireball_travel"
+    ]
+  },
+  "cracked_ground": {
+    "subtitle": "wandering_orc.cracked_ground",
+    "sounds": [
+      "wandering_orc:cracked_ground"
     ]
   }
 }

@@ -65,6 +65,7 @@ public class TrollThrowableEntity extends PersistentProjectileEntity implements 
             this.getWorld().playSound(null, this.getX(), this.getY(), this.getZ(), SoundEvents.BLOCK_MUD_BRICKS_STEP,
                     SoundCategory.NEUTRAL, 0.55f, 2.00f);
         }
+        this.discard();
     }
 
     @Override

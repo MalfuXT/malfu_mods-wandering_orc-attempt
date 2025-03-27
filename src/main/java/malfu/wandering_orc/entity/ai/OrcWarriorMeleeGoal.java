@@ -2,6 +2,8 @@ package malfu.wandering_orc.entity.ai;
 
 import malfu.wandering_orc.entity.custom.OrcArcherEntity;
 import malfu.wandering_orc.entity.custom.OrcWarriorEntity;
+import malfu.wandering_orc.util.MobMoveUtil;
+import malfu.wandering_orc.util.SoundUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
@@ -35,14 +37,14 @@ public class OrcWarriorMeleeGoal extends Goal {
 
     private void attackNormal() {
         this.orc.tryAttack(target);
-        this.orc.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 1.0F, 1.0F);
+        SoundUtil.sharpImpact(orc, 0.8f, 1.2f);
     }
 
     //START OF STOP ATTACK CODE
     private int stopAttackCD;
     private void stopAttackTrig(int stopATimer) {
         this.stopAttackCD = stopATimer;
-        this.orc.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.15f);
+        this.orc.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.05f);
     }
 
     private void stopAttack() {
@@ -71,6 +73,7 @@ public class OrcWarriorMeleeGoal extends Goal {
         this.target = null;
         this.orc.setTrigger(false);
         this.orc.setAttacking(false);
+        this.orc.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.25f);
     }
 
     @Override
@@ -104,7 +107,7 @@ public class OrcWarriorMeleeGoal extends Goal {
                     this.attackCondition = 2;
                 }
             } else {
-                this.orc.setAttackName("animation.orc_warrior.attack_combo");
+                this.orc.setAttackName("animation.orc_warrior.attack_combo2");
                 this.attackCondition = 3;
             }
         }
@@ -128,6 +131,12 @@ public class OrcWarriorMeleeGoal extends Goal {
         }
         if (this.attackCondition == 3) {
 
+            if(this.attackCooldown == 27){
+                MobMoveUtil.veloForward(orc, 0.4);
+            } else if (this.attackCooldown == 20) {
+                MobMoveUtil.veloForward(orc, 0.8);
+            }
+
             if(distanceToTarget <= d && this.attackCooldown == 0) {
                 this.attackCooldown = 40;
                 this.orc.setTrigger(true);
@@ -149,6 +158,6 @@ public class OrcWarriorMeleeGoal extends Goal {
     }
 
     protected double getSquaredMaxAttackDistance(LivingEntity entity) {
-        return (double) (2.0F + entity.getWidth());
+        return (double) (1.6F + entity.getWidth());
     }
 }

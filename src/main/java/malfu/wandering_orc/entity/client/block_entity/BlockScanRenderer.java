@@ -26,6 +26,7 @@ public class BlockScanRenderer extends GeoEntityRenderer<BlockScanEntity> {
     @Override
     public void render(BlockScanEntity entity, float entityYaw, float partialTick, MatrixStack poseStack, VertexConsumerProvider bufferSource, int packedLight) {
         BlockState blockState = entity.getBlockState();
+        float alpha = entity.getAlpha();
 
         // Apply the entity's rotation
         poseStack.push();
@@ -35,7 +36,7 @@ public class BlockScanRenderer extends GeoEntityRenderer<BlockScanEntity> {
         poseStack.translate(-0.5, -0.5, -0.5); // Revert translation
 
         // Render the block state dynamically
-        MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(blockState, poseStack, bufferSource, packedLight, OverlayTexture.DEFAULT_UV);
+        MinecraftClient.getInstance().getBlockRenderManager().renderBlockAsEntity(blockState, poseStack, bufferSource, 15728640, OverlayTexture.DEFAULT_UV);
         poseStack.pop();
     }
 }

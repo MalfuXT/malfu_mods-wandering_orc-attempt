@@ -8,10 +8,9 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
 public class MobMoveUtil {
-    private int dodgeNoDMGTimer;
-    private static final int CIRCLE_DELAY = 100; // Delay in ticks (1 second = 20 ticks)
+    private static final int CIRCLE_DELAY = 200; // Delay in ticks (1 second = 20 ticks)
 
-    public static void circleTarget(LivingEntity mob, LivingEntity target, double distance, double speedMultiplier) {
+    public static void maintainRangeWhileCircling(LivingEntity mob, LivingEntity target, double distance, double speedMultiplier) {
         if (mob instanceof MobEntity) {
             MobEntity mobEntity = (MobEntity) mob;
 
@@ -19,19 +18,28 @@ public class MobMoveUtil {
                 // Calculate the vector from the mob to the target
                 Vec3d directionToTarget = new Vec3d(target.getX() - mob.getX(), 0, target.getZ() - mob.getZ());
 
+                // Normalize the direction vector
+                double length = Math.sqrt(directionToTarget.x * directionToTarget.x + directionToTarget.z * directionToTarget.z);
+                Vec3d normalizedDirection = new Vec3d(directionToTarget.x / length, 0, directionToTarget.z / length);
+
                 // Determine clockwise or counter-clockwise circling randomly
                 boolean clockwise = mobEntity.getRandom().nextBoolean();
 
                 // Calculate perpendicular vector
                 Vec3d perpendicular = clockwise ?
-                        new Vec3d(-directionToTarget.z, 0, directionToTarget.x) :
-                        new Vec3d(directionToTarget.z, 0, -directionToTarget.x);
+                        new Vec3d(-normalizedDirection.z, 0, normalizedDirection.x) :
+                        new Vec3d(normalizedDirection.z, 0, -normalizedDirection.x);
 
-                // Calculate flee position by offsetting the target position perpendicularly
-                BlockPos fleePos = target.getBlockPos().add((int) perpendicular.x * (int) distance, 0, (int) perpendicular.z * (int) distance);
+                // Calculate the desired position by offsetting the target position perpendicularly and maintaining the range
+                Vec3d desiredPosition = new Vec3d(
+                        target.getX() + perpendicular.x * distance,
+                        mob.getY(),
+                        target.getZ() + perpendicular.z * distance
+                );
 
-                // Find a path to the flee position
-                Path path = mobEntity.getNavigation().findPathTo(fleePos, 0);
+                // Find a path to the desired position
+                Path path = mobEntity.getNavigation().findPathTo(
+                        new BlockPos((int) desiredPosition.x, (int) desiredPosition.y, (int) desiredPosition.z), 0);
 
                 // If a path is found, start moving along the path
                 if (path != null) {
@@ -39,5 +47,45 @@ public class MobMoveUtil {
                 }
             }
         }
+    }
+
+    public static void moveAwayFromTarget(LivingEntity mob, LivingEntity target, double distance, double speedMultiplier) {
+        if (mob instanceof MobEntity) {
+            MobEntity mobEntity = (MobEntity) mob;
+
+            // Calculate the vector from the mob to the target
+            Vec3d directionToTarget = new Vec3d(target.getX() - mob.getX(), 0, target.getZ() - mob.getZ());
+
+            // Normalize the direction vector
+            double length = Math.sqrt(directionToTarget.x * directionToTarget.x + directionToTarget.z * directionToTarget.z);
+            Vec3d normalizedDirection = new Vec3d(directionToTarget.x / length, 0, directionToTarget.z / length);
+
+            // Calculate the desired position by moving away from the target
+            Vec3d desiredPosition = new Vec3d(
+                    mob.getX() - normalizedDirection.x * distance,
+                    mob.getY(),
+                    mob.getZ() - normalizedDirection.z * distance
+            );
+
+            // Find a path to the desired position
+            Path path = mobEntity.getNavigation().findPathTo(
+                    new BlockPos((int) desiredPosition.x, (int) desiredPosition.y, (int) desiredPosition.z), 0);
+
+            // If a path is found, start moving along the path
+            if (path != null) {
+                mobEntity.getNavigation().startMovingAlong(path, speedMultiplier);
+            }
+        }
+    }
+
+    public static void veloForward(LivingEntity mob, double distance) {
+        Vec3d forwardDirection;
+
+        forwardDirection = mob.getRotationVector().add(0, 0, 0); // Dodge in the direction the mob is facing
+        double forwardDistance = distance;
+
+        Vec3d forwardVelocity = forwardDirection.normalize().multiply(forwardDistance);
+
+        mob.setVelocity(forwardVelocity);
     }
 }

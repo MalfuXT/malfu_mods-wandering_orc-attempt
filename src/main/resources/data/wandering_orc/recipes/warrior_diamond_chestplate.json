@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "wandering_orc:armor/warrior_chestplate"
+    },
+    "C": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "pattern": [
+    " S ",
+    "CCC",
+    "CCC"
+  ],
+  "result": {
+    "item": "wandering_orc:armor/warrior_diamond_chestplate"
+  },
+  "show_notification": true
+}

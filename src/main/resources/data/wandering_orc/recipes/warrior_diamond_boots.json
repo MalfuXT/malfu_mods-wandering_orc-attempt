@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "wandering_orc:armor/warrior_boots"
+    },
+    "C": {
+      "item": "minecraft:diamond"
+    }
+  },
+  "pattern": [
+    "   ",
+    "C C",
+    "CSC"
+  ],
+  "result": {
+    "item": "wandering_orc:armor/warrior_diamond_boots"
+  },
+  "show_notification": true
+}

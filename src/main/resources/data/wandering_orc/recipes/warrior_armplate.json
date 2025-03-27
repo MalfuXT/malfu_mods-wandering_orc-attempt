@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "wandering_orc:iron_armor_plate"
+    },
+    "C": {
+      "item": "minecraft:leather"
+    }
+  },
+  "pattern": [
+    "S S",
+    " C ",
+    " C "
+  ],
+  "result": {
+    "item": "wandering_orc:armor/warrior_armplate"
+  },
+  "show_notification": true
+}

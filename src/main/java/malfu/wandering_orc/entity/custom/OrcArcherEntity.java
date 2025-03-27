@@ -4,6 +4,7 @@ import malfu.wandering_orc.entity.ai.CrossOrcRevengeGoal;
 import malfu.wandering_orc.entity.ai.OrcArcherMeleeBowGoal;
 import malfu.wandering_orc.entity.ai.wander.OrcFollowLeaderGoal;
 import malfu.wandering_orc.sound.ModSounds;
+import malfu.wandering_orc.util.config.ModBonusHealthConfig;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.*;
@@ -28,6 +29,8 @@ import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class OrcArcherEntity extends OrcGroupEntity implements GeoEntity {
     private final AnimatableInstanceCache cache = GeckoLibUtil.createInstanceCache(this);
+    private int animationTick;
+    private int idleCondition = 0;
 
     public OrcArcherEntity(EntityType<? extends OrcGroupEntity> entityType, World world) {
         super(entityType, world);
@@ -57,12 +60,12 @@ public class OrcArcherEntity extends OrcGroupEntity implements GeoEntity {
     }
 
     public static DefaultAttributeContainer.Builder setAttributes() {
-        return OrcGroupEntity.createHostileAttributes()
+        return OrcGroupEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 30.0D)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.20f)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 24.0D + ModBonusHealthConfig.orcArcherBonusHealth)
                 .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0f)
-                .add(EntityAttributes.GENERIC_ARMOR, 3.0f)
+                .add(EntityAttributes.GENERIC_ARMOR, 2.0)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.3f);
     }
 
@@ -70,11 +73,11 @@ public class OrcArcherEntity extends OrcGroupEntity implements GeoEntity {
     @Override
     protected void initGoals() {
         this.goalSelector.add(1, new SwimGoal(this));
-        this.goalSelector.add(2, new OrcArcherMeleeBowGoal(this, 1.4));
+        this.goalSelector.add(2, new OrcArcherMeleeBowGoal(this, 1.6));
         this.goalSelector.add(3, new OrcFollowLeaderGoal(this));
         this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0D));
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
-        this.goalSelector.add(6, new LookAroundGoal(this));
+        this.goalSelector.add(7, new LookAroundGoal(this));
         this.targetSelector.add(1, new CrossOrcRevengeGoal(this, OrcGroupEntity.class).setGroupRevenge());
         this.targetSelector.add(4, new ActiveTargetGoal<>(this, PlayerEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, MerchantEntity.class, false));
@@ -82,14 +85,16 @@ public class OrcArcherEntity extends OrcGroupEntity implements GeoEntity {
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, PatrolEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, AbstractPiglinEntity.class, true));
         this.targetSelector.add(3, new ActiveTargetGoal<>(this, ZombieEntity.class, true));
-        this.targetSelector.add(2, new ActiveTargetGoal<>(this, LivingEntity.class, 10, true, false, OrcGroupEntity.TARGET_ORC_ENEMIES));
+        this.targetSelector.add(2, new ActiveTargetGoal<>(this, LivingEntity.class, 10,
+                true, false, OrcGroupEntity.TARGET_ORC_ENEMIES));
     }
 
 
     @Override
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
-        controllers.add(new AnimationController<>(this, "attackingstance", 0, this::attackstancePredicate));
+        controllers.add(new AnimationController<>(this, "attackingstance", 0, this::attackstancePredicate)
+                .setAnimationSpeed(1.0f));
         controllers.add(new AnimationController<>(this, "attack", 0, this::attackPredicate));
     }
 
@@ -104,11 +109,31 @@ public class OrcArcherEntity extends OrcGroupEntity implements GeoEntity {
 
 
     private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> event) {
+        this.animationTick = Math.max(this.animationTick - 1, 0);
+        float speed = ((OrcGroupEntity) event.getAnimatable()).getDataTracker().get(SPEED);
+        if (speed >= 1.2f) {
+            event.getController().setAnimationSpeed(1.3f);
+        } else {
+            event.getController().setAnimationSpeed(1.0f);
+        }
+
         if (event.isMoving()) {
-            event.getController().setAnimation(RawAnimation.begin().then("animation.orc_archer.walk2", Animation.LoopType.LOOP));
+            event.getController().setAnimation(RawAnimation.begin().then("animation.orc_archer.walk", Animation.LoopType.LOOP));
             return PlayState.CONTINUE;
         }
-        event.getController().setAnimation(RawAnimation.begin().then("animation.orc_archer.idle2", Animation.LoopType.LOOP));
+
+        if (this.animationTick == 0) {
+            this.idleCondition = Math.random() < 0.9 ? 1 : 2;
+        }
+
+        if (idleCondition == 1) {
+            event.getController().setAnimation(RawAnimation.begin().then("animation.orc_archer.idle", Animation.LoopType.LOOP));
+        } else {
+            event.getController().setAnimation(RawAnimation.begin().then("animation.orc_archer.idle2", Animation.LoopType.LOOP));
+        }
+
+        this.animationTick = 500;
+
         return PlayState.CONTINUE;
     }
 
@@ -128,6 +153,10 @@ public class OrcArcherEntity extends OrcGroupEntity implements GeoEntity {
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
         return ModSounds.ORC_HURT2;
+    }
+
+    public int getXpToDrop() {
+        return 3;
     }
 
 

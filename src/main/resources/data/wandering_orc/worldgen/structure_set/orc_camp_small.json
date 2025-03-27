@@ -1,0 +1,21 @@
+{
+  "structures": [
+    {
+      "structure": "wandering_orc:orc_camp_small",
+      "weight": 1
+    }
+  ],
+  "placement": {
+    "type": "minecraft:random_spread",
+    "salt": 35572810,
+    "exclusion_zone":
+    {
+      "other_set":"wandering_orc:orc_camp",
+      "chunk_count": 5
+    },
+    "spacing": 48,
+    "separation": 24,
+    "frequency": 0.5,
+    "frequency_reduction_method": "legacy_type_1"
+  }
+}

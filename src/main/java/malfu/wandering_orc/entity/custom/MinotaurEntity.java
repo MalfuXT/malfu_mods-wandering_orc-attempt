@@ -2,10 +2,9 @@ package malfu.wandering_orc.entity.custom;
 
 import malfu.wandering_orc.entity.ai.CrossOrcRevengeGoal;
 import malfu.wandering_orc.entity.ai.MinotaurMeleeGoal;
-import malfu.wandering_orc.entity.ai.OrcChampionMeleeGoal;
-import malfu.wandering_orc.entity.ai.OrcWarriorMeleeGoal;
 import malfu.wandering_orc.entity.ai.wander.OrcFollowLeaderGoal;
 import malfu.wandering_orc.sound.ModSounds;
+import malfu.wandering_orc.util.config.ModBonusHealthConfig;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.*;
@@ -67,12 +66,12 @@ public class MinotaurEntity extends OrcGroupEntity implements GeoEntity {
 
 
     public static DefaultAttributeContainer.Builder setAttributes() {
-        return OrcGroupEntity.createHostileAttributes()
+        return OrcGroupEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35)
                 .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 90.0D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 18.0f)
-                .add(EntityAttributes.GENERIC_ARMOR, 8.0f)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 45.0D + ModBonusHealthConfig.minotaurBonusHealth)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 10.0f)
+                .add(EntityAttributes.GENERIC_ARMOR, 3.0f)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.5f);
     }
 
@@ -99,14 +98,14 @@ public class MinotaurEntity extends OrcGroupEntity implements GeoEntity {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 0, this::predicate).setSoundKeyframeHandler((event) -> {
             PlayerEntity player = ClientUtils.getClientPlayer();
-            if (player != null) {
+            if (player != null && !this.isTouchingWater()) {
                 this.getWorld().playSound(player, this.getX(), this.getY(), this.getZ(), SoundEvents.ENTITY_COW_STEP, this.getSoundCategory(),0.5F, 0.8f);
             }
         }));
         controllers.add(new AnimationController<>(this, "attack", 0, this::attackPredicate).setSoundKeyframeHandler((event) -> {
             PlayerEntity player = ClientUtils.getClientPlayer();
             if (player != null) {
-                this.getWorld().playSound(player, this.getX(), this.getY(), this.getZ(), ModSounds.SWING_SOUND, this.getSoundCategory(),1.0F, 1.0f);
+                this.getWorld().playSound(player, this.getX(), this.getY(), this.getZ(), ModSounds.SWING_SOUND, this.getSoundCategory(),0.5F, 1.0f);
             }
         }));
     }
@@ -122,6 +121,12 @@ public class MinotaurEntity extends OrcGroupEntity implements GeoEntity {
     private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> event) {
         this.animationTick = Math.max(this.animationTick - 1, 0);
 
+        float speed = ((OrcGroupEntity) event.getAnimatable()).getDataTracker().get(SPEED);
+        if (speed >= 1.2f) {
+            event.getController().setAnimationSpeed(1.2f);
+        } else {
+            event.getController().setAnimationSpeed(1.0f);
+        }
 
         if (event.isMoving()) {
             event.getController().setAnimation(RawAnimation.begin().then("animation.minotaur.walk", Animation.LoopType.LOOP));
@@ -151,6 +156,10 @@ public class MinotaurEntity extends OrcGroupEntity implements GeoEntity {
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
         return ModSounds.MINO_HURT;
+    }
+
+    public int getXpToDrop() {
+        return 5;
     }
 
 

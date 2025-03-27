@@ -37,6 +37,7 @@ public class OrcArrowEntity extends ArrowEntity {
                 LivingEntity livingTarget = (LivingEntity) target;
                 livingTarget.damage(this.getDamageSources().thrown(this, this.getOwner()), this.damage);
             }
+            this.discard();
         }
     }
 }

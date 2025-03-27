@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "minecraft:diamond"
+    },
+    "C": {
+      "item": "wandering_orc:weapon/orc_iron_axe"
+    }
+  },
+  "pattern": [
+    "SSS",
+    " CS",
+    "   "
+  ],
+  "result": {
+    "item": "wandering_orc:weapon/orc_diamond_axe"
+  },
+  "show_notification": true
+}

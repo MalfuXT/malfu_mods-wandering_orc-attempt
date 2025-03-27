@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "wandering_orc:armor/warrior_leather_boots"
+    },
+    "C": {
+      "item": "minecraft:iron_ingot"
+    }
+  },
+  "pattern": [
+    "   ",
+    "C C",
+    "CSC"
+  ],
+  "result": {
+    "item": "wandering_orc:armor/warrior_boots"
+  },
+  "show_notification": true
+}

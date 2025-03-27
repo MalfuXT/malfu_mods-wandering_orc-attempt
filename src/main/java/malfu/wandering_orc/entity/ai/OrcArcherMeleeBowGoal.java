@@ -9,6 +9,7 @@ import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.ai.pathing.Path;
+import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.projectile.ArrowEntity;
 import net.minecraft.entity.projectile.PersistentProjectileEntity;
 import net.minecraft.item.ItemStack;
@@ -27,11 +28,12 @@ public class OrcArcherMeleeBowGoal extends Goal {
     private int attackCooldown;
     private double speed;
     private int attackCondition = 0;
-    double randomizer;
+    private float damage;
 
     public OrcArcherMeleeBowGoal(OrcArcherEntity orc, double speed) {
         this.orc = orc;
         this.speed = speed;
+        this.damage = (float) this.orc.getAttributeBaseValue(EntityAttributes.GENERIC_ATTACK_DAMAGE);
         this.setControls(EnumSet.of(Control.TARGET, Control.MOVE));
     }
 
@@ -86,7 +88,6 @@ public class OrcArcherMeleeBowGoal extends Goal {
         this.attackCooldown = Math.max(this.attackCooldown - 1, 0);
         if (this.target == null) return;
         double distanceToTarget = this.orc.distanceTo(this.target);
-        this.orc.getLookControl().lookAt(target.getX(), target.getEyeY(), target.getZ());
 
         if(this.attackCondition == 0) {
             if(distanceToTarget > 3) {
@@ -99,40 +100,63 @@ public class OrcArcherMeleeBowGoal extends Goal {
         }
 
         if(this.attackCondition == 1) {
-            if (distanceToTarget <= 15 && this.attackCooldown <= 0) {
-                this.orc.getNavigation().startMovingTo(target, 0.1f);
+            if(this.attackCooldown <= 80 & this.attackCooldown >= 64) {
+                this.orc.getNavigation().stop();
+                this.orc.lookAtEntity(target, 30, 30);
+                this.orc.getMoveControl().strafeTo(-0.1f, 0f);
+            }
+
+            if (distanceToTarget <= 20 && this.attackCooldown <= 0 && this.orc.canSee(target)) {
                 this.attackCooldown = 80;
                 this.orc.setTrigger(true);
-            } else if (distanceToTarget <= 15 && this.attackCooldown == 64){
+            } else if (distanceToTarget <= 20 && this.attackCooldown == 64 && this.orc.isTrigger()){
                 World world = this.orc.getWorld();
                 ItemStack arrowStack = this.orc.getProjectileType(new ItemStack(Items.ARROW));
                 PersistentProjectileEntity arrow = createArrow(world, arrowStack);
                 arrow.setOwner(this.orc);
 
-                double x = this.target.getX() - this.orc.getX();
-                double y = this.target.getBodyY(0.33333333333) - arrow.getY();
-                double z = this.target.getZ() - this.orc.getZ();
-                double f = MathHelper.sqrt((float) (x * x + z * z));
-                arrow.setVelocity(x, y + f * 0.1, z, 1.6F, 0.5F);
+                // Calculate the offset in front of the orc
+                double offsetDistance = 1.0; // Distance in front of the orc (adjust as needed)
+                double yawRadians = Math.toRadians(this.orc.getYaw()); // Convert yaw to radians
+
+                double offsetX = -Math.sin(yawRadians) * offsetDistance; // Calculate X offset
+                double offsetZ = Math.cos(yawRadians) * offsetDistance; // Calculate Z offset
+
+                // Set the arrow's position slightly in front of the orc
+                double arrowX = this.orc.getX() + offsetX;
+                double arrowY = this.orc.getEyeY() - 0.1; // Adjust Y position to eye level
+                double arrowZ = this.orc.getZ() + offsetZ;
+                arrow.setPosition(arrowX, arrowY, arrowZ);
+
+                // Calculate the arrow's velocity based on the target's position
+                double targetX = this.target.getX() - arrowX;
+                double targetY = this.target.getBodyY(0.33333333333) - arrowY;
+                double targetZ = this.target.getZ() - arrowZ;
+                double f = MathHelper.sqrt((float) (targetX * targetX + targetZ * targetZ));
+                arrow.setVelocity(targetX, targetY + f * 0.15, targetZ, 1.8F, 0.5F);
+
+                // Spawn the arrow in the world
                 world.spawnEntity(arrow);
 
+                // Reset the orc's trigger and play a sound
                 this.orc.setTrigger(false);
-                this.orc.playSound(SoundEvents.ITEM_CROSSBOW_SHOOT, 1.0F, 1.0F);
-            } else if (distanceToTarget > 15) {
-                Path path = this.orc.getNavigation().findPathTo(target, 3);
+                this.orc.playSound(SoundEvents.ITEM_CROSSBOW_SHOOT, 1.0F, 0.8F);
+            } else if (distanceToTarget > 20) {
+                Path path = this.orc.getNavigation().findPathTo(target, 6);
                 this.orc.getNavigation().startMovingAlong(path, this.speed);
+                this.orc.setTrigger(false);
 
             } else if (this.attackCooldown <= 1) {
                 this.attackCondition = 0;
 
             } else if (this.attackCooldown <= 60 && distanceToTarget < 7) {
-                MobMoveUtil.circleTarget(orc, target, 3, speed);
+                MobMoveUtil.moveAwayFromTarget(orc, target, 10, speed);
             }
         }
 
         if(this.attackCondition == 2) {
             if(this.attackCooldown <= 60 && this.attackCooldown >= 5) {
-                MobMoveUtil.circleTarget(orc, target, 3, speed);
+                MobMoveUtil.moveAwayFromTarget(orc, target, 10, speed);
             } else {
                 this.orc.getNavigation().startMovingTo(target, this.speed);
             }
@@ -146,6 +170,8 @@ public class OrcArcherMeleeBowGoal extends Goal {
                 this.punchAttack(target);
                 this.orc.setTrigger(false);
 
+            } else if (this.attackCooldown == 64) {
+                this.orc.setTrigger(false);
             } else if (this.attackCooldown <= 1) {
                 this.attackCondition = 0;
             }
@@ -153,7 +179,6 @@ public class OrcArcherMeleeBowGoal extends Goal {
     }
 
     private PersistentProjectileEntity createArrow(World world, ItemStack arrowStack) {
-        OrcArrowEntity arrow = new OrcArrowEntity(world, this.orc, 8); //SET DAMAGE HERE
-        return arrow;
+        return new OrcArrowEntity(world, this.orc, damage);
     }
 }

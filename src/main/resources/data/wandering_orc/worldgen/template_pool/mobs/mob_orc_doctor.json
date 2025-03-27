@@ -1,0 +1,15 @@
+{
+  "name": "wandering_orc:mobs/mob_orc_doctor",
+  "fallback": "minecraft:empty",
+  "elements": [
+    {
+      "weight": 1,
+      "element": {
+        "location": "wandering_orc:entities/troll_doctor",
+        "processors": "minecraft:empty",
+        "projection": "rigid",
+        "element_type": "minecraft:single_pool_element"
+      }
+    }
+  ]
+}

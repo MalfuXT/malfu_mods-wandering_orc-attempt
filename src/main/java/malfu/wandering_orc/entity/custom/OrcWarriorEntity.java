@@ -4,6 +4,7 @@ import malfu.wandering_orc.entity.ai.CrossOrcRevengeGoal;
 import malfu.wandering_orc.entity.ai.OrcWarriorMeleeGoal;
 import malfu.wandering_orc.entity.ai.wander.OrcFollowLeaderGoal;
 import malfu.wandering_orc.sound.ModSounds;
+import malfu.wandering_orc.util.config.ModBonusHealthConfig;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.*;
@@ -24,6 +25,7 @@ import software.bernie.geckolib.core.animatable.GeoAnimatable;
 import software.bernie.geckolib.core.animatable.instance.AnimatableInstanceCache;
 import software.bernie.geckolib.core.animation.*;
 import software.bernie.geckolib.core.object.PlayState;
+import software.bernie.geckolib.util.ClientUtils;
 import software.bernie.geckolib.util.GeckoLibUtil;
 
 public class OrcWarriorEntity extends OrcGroupEntity implements GeoEntity {
@@ -60,19 +62,19 @@ public class OrcWarriorEntity extends OrcGroupEntity implements GeoEntity {
     public String getAttackName() {return (String)this.dataTracker.get(ATKVARI);}
 
     public static DefaultAttributeContainer.Builder setAttributes() {
-        return OrcGroupEntity.createHostileAttributes()
+        return OrcGroupEntity.createMobAttributes()
                 .add(EntityAttributes.GENERIC_FOLLOW_RANGE, 35)
-                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.25f)
-                .add(EntityAttributes.GENERIC_MAX_HEALTH, 28.0D)
-                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 7.0f)
-                .add(EntityAttributes.GENERIC_ARMOR, 9.0f)
+                .add(EntityAttributes.GENERIC_MOVEMENT_SPEED, 0.20f)
+                .add(EntityAttributes.GENERIC_MAX_HEALTH, 28.0D + ModBonusHealthConfig.orcWarriorBonusHealth)
+                .add(EntityAttributes.GENERIC_ATTACK_DAMAGE, 5.0f)
+                .add(EntityAttributes.GENERIC_ARMOR, 6.0f)
                 .add(EntityAttributes.GENERIC_KNOCKBACK_RESISTANCE, 0.3f);
     }
 
     @Override
     protected void initGoals() {
         this.goalSelector.add(1, new SwimGoal(this));
-        this.goalSelector.add(2, new OrcWarriorMeleeGoal(this, 1.4));
+        this.goalSelector.add(2, new OrcWarriorMeleeGoal(this, 1.55));
         this.goalSelector.add(3, new OrcFollowLeaderGoal(this));
         this.goalSelector.add(5, new WanderAroundFarGoal(this, 1.0D));
         this.goalSelector.add(6, new LookAtEntityGoal(this, PlayerEntity.class, 8.0F));
@@ -92,7 +94,12 @@ public class OrcWarriorEntity extends OrcGroupEntity implements GeoEntity {
     public void registerControllers(AnimatableManager.ControllerRegistrar controllers) {
         controllers.add(new AnimationController<>(this, "controller", 0, this::predicate));
         controllers.add(new AnimationController<>(this, "attackingstance", 0, this::attackstancePredicate));
-        controllers.add(new AnimationController<>(this, "attack", 0, this::attackPredicate));
+        controllers.add(new AnimationController<>(this, "attack", 0, this::attackPredicate).setSoundKeyframeHandler((event) -> {
+            PlayerEntity player = ClientUtils.getClientPlayer();
+            if (player != null) {
+                this.getWorld().playSound(player, this.getX(), this.getY(), this.getZ(), ModSounds.SWING_LIGHT, this.getSoundCategory(),0.5F, 2.0f);
+            }
+        }));
     }
 
     private <E extends GeoAnimatable> PlayState attackPredicate(AnimationState<E> event) {
@@ -106,6 +113,14 @@ public class OrcWarriorEntity extends OrcGroupEntity implements GeoEntity {
     private <E extends GeoAnimatable> PlayState predicate(AnimationState<E> event) {
         this.animationTick = Math.max(this.animationTick - 1, 0);
         this.randomizer = Math.random();
+
+        float speed = ((OrcGroupEntity) event.getAnimatable()).getDataTracker().get(SPEED);
+        if (speed >= 1.2f) {
+            event.getController().setAnimationSpeed(1.4f);
+        } else {
+            event.getController().setAnimationSpeed(1.0f);
+        }
+
         if(idleCondition == 0) {
             if(randomizer < 0.5) {
                 idleCondition = 1;
@@ -151,6 +166,15 @@ public class OrcWarriorEntity extends OrcGroupEntity implements GeoEntity {
     @Override
     protected SoundEvent getHurtSound(DamageSource source) {
         return ModSounds.ORC_HURT;
+    }
+
+    @Override
+    public float getSoundPitch() {
+        return 1.0F;
+    }
+
+    public int getXpToDrop() {
+        return 3;
     }
 
 

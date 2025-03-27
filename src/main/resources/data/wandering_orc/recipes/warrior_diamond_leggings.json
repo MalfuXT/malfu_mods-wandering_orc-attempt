@@ -1,0 +1,21 @@
+{
+  "type": "minecraft:crafting_shaped",
+  "category": "misc",
+  "key": {
+    "S": {
+      "item": "minecraft:diamond"
+    },
+    "C": {
+      "item": "wandering_orc:armor/warrior_leggings"
+    }
+  },
+  "pattern": [
+    "   ",
+    "SCS",
+    " S "
+  ],
+  "result": {
+    "item": "wandering_orc:armor/warrior_diamond_leggings"
+  },
+  "show_notification": true
+}

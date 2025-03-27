@@ -1,0 +1,28 @@
+{
+  "replace": false,
+  "values": [
+    "#c:plains",
+    "minecraft:plains",
+    "minecraft:snowy_plains",
+    "minecraft:taiga",
+    "minecraft:old_growth_spruce_taiga",
+    "minecraft:savanna",
+    "minecraft:wooded_badlands",
+    {"id": "terralith:highlands", "required": false},
+    {"id": "terralith:alpine_highlands", "required": false},
+    {"id": "terralith:arid_highlands", "required": false},
+    {"id": "terralith:snowy_badlands", "required": false},
+    {"id": "terralith:lush_valley", "required": false},
+    {"id": "terralith:shield_clearing", "required": false},
+    {"id": "terralith:valley_clearing", "required": false},
+    {"id": "terralith:lush_valley", "required": false},
+    {"id": "terralith:lush_valley", "required": false},
+    {"id": "regions_unexplored:shrubland", "required": false},
+    {"id": "regions_unexplored:marsh", "required": false},
+    {"id": "regions_unexplored:maple_forest", "required": false},
+    {"id": "regions_unexplored:highland_fields", "required": false},
+    {"id": "regions_unexplored:grassland", "required": false},
+    {"id": "regions_unexplored:boreal_taiga", "required": false},
+    {"id": "regions_unexplored:blackwood_taiga", "required": false}
+  ]
+}

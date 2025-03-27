@@ -3,12 +3,17 @@ package malfu.wandering_orc.entity.ai;
 import malfu.wandering_orc.entity.custom.OrcChampionEntity;
 import malfu.wandering_orc.sound.ModSounds;
 import malfu.wandering_orc.util.MobMoveUtil;
+import malfu.wandering_orc.util.SoundUtil;
+import net.minecraft.entity.EntityStatuses;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.ai.goal.Goal;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.entity.mob.MobEntity;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.ItemStack;
+import net.minecraft.item.ShieldItem;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundEvents;
@@ -16,6 +21,7 @@ import net.minecraft.util.math.Vec3d;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Objects;
 
 public class OrcChampionMeleeGoal extends Goal {
     private final OrcChampionEntity orc;
@@ -30,7 +36,7 @@ public class OrcChampionMeleeGoal extends Goal {
     private int dodgeCount;
     private int dodgeNoDMGTimer = 10;
 
-    private int initialcooldown = 40;
+    private int initialcooldown = 25;
     private int initiallongercd = 100;
     private int initialdodgecd = 10;
     private int moveattack = 9;
@@ -47,16 +53,34 @@ public class OrcChampionMeleeGoal extends Goal {
 
     private void attackNormal() {
         this.orc.tryAttack(target);
-        this.orc.playSound(SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, 1.0F, 1.0F);
+        SoundUtil.sharpImpact(orc, 0.8f, 1.2f);
     }
 
     private void shieldAttack() {
-        if(this.orc.tryAttack(target)) {
-            target.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 20, 50));
+        if (this.orc.tryAttack(target)) {
+            if (!target.isBlocking()) {
+                target.addStatusEffect(new StatusEffectInstance(StatusEffects.BLINDNESS, 60, 255));
+            }
         }
 
-        this.orc.playSound(SoundEvents.ITEM_SHIELD_BLOCK, 0.7F, 0.7F);
+        if (target instanceof PlayerEntity && target.isBlocking()) {
+            disablePlayerShield((PlayerEntity) target);
+        }
+
+        this.orc.playSound(SoundEvents.ITEM_SHIELD_BLOCK, 0.3F, 0.7F);
     }
+
+    //SHIELD BROKE MECHANIC
+    private void disablePlayerShield(PlayerEntity player) {
+        ItemStack activeItem = player.getActiveItem();
+
+        if (activeItem.getItem() instanceof ShieldItem) {
+            player.getItemCooldownManager().set(activeItem.getItem(), 100);
+            player.getWorld().sendEntityStatus(player, EntityStatuses.BREAK_SHIELD);
+            player.clearActiveItem();
+        }
+    }
+    //SHIELD BROKE MECHANIC ENDS HERE
 
     //PARTICLE PRODUCE
     private void generateDodgeParticle() {
@@ -91,9 +115,9 @@ public class OrcChampionMeleeGoal extends Goal {
     //START OF STOP ATTACK CODE
     private void setAttackStopped() {
         if (this.orc.isShieldStop()) {
-            this.orc.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.025f);
+            Objects.requireNonNull(this.orc.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).setBaseValue(0.025f);
         } else {
-            this.orc.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED).setBaseValue(0.25f);
+            Objects.requireNonNull(this.orc.getAttributeInstance(EntityAttributes.GENERIC_MOVEMENT_SPEED)).setBaseValue(0.25f);
         }
     }
     //END OF STOP ATTACK CODE
@@ -164,6 +188,9 @@ public class OrcChampionMeleeGoal extends Goal {
         this.orc.setTrigger(false);
         this.orc.setAttacking(false);
         this.orc.setDodge(false);
+        this.orc.setShieldStop(false);
+        this.orc.setShielding(false);
+        this.orc.setAnimShielding(false);
     }
 
     @Override
@@ -197,16 +224,16 @@ public class OrcChampionMeleeGoal extends Goal {
             this.shieldCD = 100;
         }
 
-        if((attackCondition == 1 || attackCondition == 2 || attackCondition == 3 && attackCooldown <= initialcooldown-moveattack-3)
-                || (attackCondition == 4 && attackCooldown <= initiallongercd-(movecombo3+movecombo2+movecombo1+3))) {
-            MobMoveUtil.circleTarget(orc, target, 5, this.speed);
+        if((((attackCondition == 1 || attackCondition == 2 || attackCondition == 3) && attackCooldown <= initialcooldown-moveattack-3))
+                || ((attackCondition == 4 && attackCooldown <= initiallongercd-(movecombo3+movecombo2+movecombo1+3)))) {
+            MobMoveUtil.moveAwayFromTarget(orc, target, 3, this.speed);
         } else {
             this.orc.getNavigation().startMovingTo(target, this.speed);
         }
 
         if(this.attackCondition == 0) {
             this.randomizer = Math.random();
-            if(this.randomizer < 0.7) {
+            if(this.randomizer < 0.4) {
                 this.randomizer = Math.random();
                 if(this.randomizer < 0.5 && (isBeingTargeted() || (target != null && target.isPlayer()))) {
                     if(this.dodgeCooldown == 0) {
@@ -292,7 +319,7 @@ public class OrcChampionMeleeGoal extends Goal {
         }
 
         if(this.attackCondition == 99) {
-            if(distanceToTarget <= d && this.attackCooldown == 0) {
+            if(distanceToTarget <= d+4 && this.attackCooldown == 0) {
                 this.attackCooldown = initialdodgecd;
                 this.dodge();
                 this.dodgeCount++;
@@ -304,7 +331,11 @@ public class OrcChampionMeleeGoal extends Goal {
         }
 
         if(this.attackCondition == 98) {
-            if(distanceToTarget <= d && this.attackCooldown == 0) {
+            if(this.attackCooldown >= 1 && !this.orc.isShielding()) {
+                this.attackCooldown = 1;
+            }
+
+            if(distanceToTarget <= d+4 && this.attackCooldown == 0) {
                 this.generateShieldParticle();
                 this.orc.playSound(ModSounds.SHIELD_STANCE, 1.0f, 1.0f);
                 this.orc.setShielding(true);
@@ -324,6 +355,6 @@ public class OrcChampionMeleeGoal extends Goal {
     }
 
     protected double getSquaredMaxAttackDistance(LivingEntity entity) {
-        return (double) (2.0F + entity.getWidth());
+        return (double) (1.8F + entity.getWidth());
     }
 }

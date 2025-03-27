@@ -1,0 +1,111 @@
+{
+	"format_version": "1.12.0",
+	"minecraft:geometry": [
+		{
+			"description": {
+				"identifier": "geometry.unknown",
+				"texture_width": 64,
+				"texture_height": 64,
+				"visible_bounds_width": 2,
+				"visible_bounds_height": 2.5,
+				"visible_bounds_offset": [0, 0.75, 0]
+			},
+			"bones": [
+				{
+					"name": "flame_projectile",
+					"pivot": [2, 6.5, -0.5]
+				},
+				{
+					"name": "ringflame",
+					"parent": "flame_projectile",
+					"pivot": [2, 6.5, -0.5]
+				},
+				{
+					"name": "ring1",
+					"parent": "ringflame",
+					"pivot": [7, 7.5, -0.5],
+					"cubes": [
+						{"origin": [7, 2.5, -5.5], "size": [0, 10, 10], "uv": [24, -4]}
+					]
+				},
+				{
+					"name": "ring2",
+					"parent": "ringflame",
+					"pivot": [4, 7.5, -0.5],
+					"cubes": [
+						{"origin": [4, 2.5, -5.5], "size": [0, 10, 10], "uv": [24, -4]}
+					]
+				},
+				{
+					"name": "ring3",
+					"parent": "ringflame",
+					"pivot": [1, 7.5, -0.5],
+					"cubes": [
+						{"origin": [1, 2.5, -5.5], "size": [0, 10, 10], "uv": [24, -4]}
+					]
+				},
+				{
+					"name": "mainflame",
+					"parent": "flame_projectile",
+					"pivot": [2, 3, 2]
+				},
+				{
+					"name": "main",
+					"parent": "mainflame",
+					"pivot": [6.5, 7.5, -0.5],
+					"cubes": [
+						{"origin": [4, 5, -3], "size": [5, 5, 5], "uv": [0, 0]}
+					]
+				},
+				{
+					"name": "small3",
+					"parent": "main",
+					"pivot": [1.5, 10.5, -3.5],
+					"cubes": [
+						{"origin": [0, 9, -5], "size": [3, 3, 3], "uv": [0, 10]}
+					]
+				},
+				{
+					"name": "small1",
+					"parent": "mainflame",
+					"pivot": [1.5, 10.5, 2.5],
+					"cubes": [
+						{"origin": [0, 9, 1], "size": [3, 3, 3], "uv": [0, 10]}
+					]
+				},
+				{
+					"name": "small2",
+					"parent": "mainflame",
+					"pivot": [-2.5, 10.5, 2.5],
+					"cubes": [
+						{"origin": [-4, 9, 1], "size": [3, 3, 3], "uv": [0, 10]}
+					]
+				},
+				{
+					"name": "small4",
+					"parent": "mainflame",
+					"pivot": [-2.5, 10.5, -3.5],
+					"cubes": [
+						{"origin": [-4, 9, -5], "size": [3, 3, 3], "uv": [0, 10]}
+					]
+				},
+				{
+					"name": "small5",
+					"parent": "mainflame",
+					"pivot": [1.5, 4.5, -3.5],
+					"cubes": [
+						{"origin": [0, 3, -5], "size": [3, 3, 3], "uv": [0, 10]}
+					]
+				},
+				{
+					"name": "small6",
+					"parent": "mainflame",
+					"pivot": [1.5, 4.5, 2.5],
+					"cubes": [
+						{"origin": [0, 3, 1], "size": [3, 3, 3], "uv": [0, 10]}
+					]
+				}
+			]
+		}
+	]
+}
